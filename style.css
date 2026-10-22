@@ -2171,3 +2171,14 @@ div.rep-card { cursor: default; }
 
 /* Case-study pictures open full screen in the viewer. */
 .pj-hero, .pj-figure img, .pj-figure video { cursor: zoom-in; }
+
+/* Phones on their side keep the desktop hero, where the small rows scale
+   with its height and would drop to 6-7px. Held at a readable floor. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .hero-canvas {
+    --eyebrow-size: max(10.5px, 1.2987cqh);
+    --meta-size: max(10px, 1.1633cqh);
+  }
+  /* the taller eyebrow pushes its rule down, so the two keep their gap */
+  .hero-rule-top { top: max(23.154%, calc(12.78% + 4.79 * var(--eyebrow-size) + 14px)); }
+}
