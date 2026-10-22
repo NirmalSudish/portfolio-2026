@@ -35,8 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const ALL = { name: title.textContent, intro: intro.textContent.trim().replace(/\s+/g, ' ') };
   const params = new URLSearchParams(location.search);
   let cat = CATS[params.get('cat')] ? params.get('cat') : 'all';
-  let brand = params.get('brand') || null;
-  const visible = c => (cat === 'all' || c.dataset.cat === cat) && (!brand || c.dataset.brand === brand);
+  let brand = params.get('brand') && params.get('brand') !== OTHER ? params.get('brand') : null;
+  // brand: null = no brand filter, '*' = every brand (client work only), else one brand
+  const visible = c => (cat === 'all' || c.dataset.cat === cat)
+    && (!brand || (brand === '*' ? c.dataset.brand !== OTHER : c.dataset.brand === brand));
 
   // The heading and its line follow the choice; the pills stay under it.
   function heading() {
@@ -44,15 +46,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let name = c.name, line = c.intro;
     if (brand) {
       const mine = cards.filter(visible), kinds = [...new Set(mine.map(x => CAT_WORD[x.dataset.cat]))];
-      name = brand;
-      line = brand === OTHER
-        ? `Self-initiated pieces and work outside the brand list: ${mine.length} in all.`
-        : `Everything made for ${brand}: ${mine.length} piece${mine.length === 1 ? '' : 's'} of ${kinds.join(', ').replace(/, ([^,]*)$/, ' and $1')}.`;
+      const list = kinds.join(', ').replace(/, ([^,]*)$/, ' and $1');
+      name = brand === '*' ? 'Brands' : brand;
+      line = brand === '*'
+        ? `Work made for clients: ${mine.length} pieces of ${list}.`
+        : `Everything made for ${brand}: ${mine.length} piece${mine.length === 1 ? '' : 's'} of ${list}.`;
     }
     document.body.classList.toggle('is-cat', !!CATS[cat] || !!brand);
     title.textContent = name;
     intro.textContent = line;
-    document.title = `${brand || (CATS[cat] ? c.name : 'Grid')} — Nirmal Sudish`;
+    document.title = `${brand ? name : (CATS[cat] ? c.name : 'Grid')} — Nirmal Sudish`;
     const q = new URLSearchParams();
     if (CATS[cat]) q.set('cat', cat);
     if (brand) q.set('brand', brand);
@@ -60,15 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // One chip per brand with work in the current category, most work first.
+  // Only real brands: the self-initiated pieces, 3D and the experiments live
+  // in their own categories, so on those tabs the row steps aside.
   function buildBrands() {
     if (!brandRow) return;
-    const pool = cards.filter(c => cat === 'all' || c.dataset.cat === cat);
+    const pool = cards.filter(c => (cat === 'all' || c.dataset.cat === cat) && c.dataset.brand !== OTHER);
     const counts = new Map();
     pool.forEach(c => counts.set(c.dataset.brand, (counts.get(c.dataset.brand) || 0) + 1));
-    if (brand && !counts.has(brand)) brand = null;   // nothing of it in this category
-    const list = [...counts].sort((x, y) => (x[0] === OTHER) - (y[0] === OTHER) || y[1] - x[1] || x[0].localeCompare(y[0]));
-    const chip = (key, label, n) => `<button class="grid-brand${(key || null) === brand ? ' is-active' : ''}" type="button" data-brand="${key}" aria-pressed="${(key || null) === brand}">${label}<span>${n}</span></button>`;
-    brandRow.innerHTML = `<span class="grid-brands-label">Brands</span>` + chip('', 'All brands', pool.length) + list.map(([k, n]) => chip(k, k, n)).join('');
+    if (brand && brand !== '*' && !counts.has(brand)) brand = null;   // nothing of it in this category
+    if (!counts.size) brand = null;
+    brandRow.hidden = counts.size === 0;
+    const list = [...counts].sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0]));
+    const chip = (key, label, n) => `<button class="grid-brand${key === brand ? ' is-active' : ''}" type="button" data-brand="${key}" aria-pressed="${key === brand}">${label}<span>${n}</span></button>`;
+    brandRow.innerHTML = `<span class="grid-brands-label">Brands</span>` + chip('*', 'All brands', pool.length) + list.map(([k, n]) => chip(k, k, n)).join('');
   }
 
   function syncTabs() {
@@ -172,11 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (brandRow) brandRow.addEventListener('click', e => {
     const b = e.target.closest('.grid-brand');
     if (!b) return;
-    const next = b.dataset.brand || null;
-    if (next === brand) return;
-    brand = next;
+    // pressing the lit chip again turns the brand filter off
+    brand = b.dataset.brand === brand ? null : b.dataset.brand;
     brandRow.querySelectorAll('.grid-brand').forEach(x => {
-      const on = (x.dataset.brand || null) === brand;
+      const on = x.dataset.brand === brand;
       x.classList.toggle('is-active', on);
       x.setAttribute('aria-pressed', on ? 'true' : 'false');
     });

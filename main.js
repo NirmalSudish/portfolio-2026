@@ -154,7 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!heroCanvas) return;
     const hl = heroCanvas.querySelector('.hero-headline');
     if (!hl) return;
-    ['--display-size', '--hl-w', '--hl-lh', '--hl-sx', '--meta-w'].forEach(v => heroCanvas.style.removeProperty(v));
+    ['--display-size', '--hl-w', '--hl-lh', '--hl-sx', '--meta-w', '--hx-logo', '--hx-eb', '--hx-r1', '--hx-name', '--hx-r2', '--hx-meta']
+      .forEach(v => heroCanvas.style.removeProperty(v));
     const base = parseFloat(getComputedStyle(hl).fontSize);   // the stylesheet's own size
     hl.style.fontSize = '100px';
     const perEm = Math.max(...Array.from(hl.querySelectorAll('.hl-line'))
@@ -185,12 +186,56 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = meta.getBoundingClientRect(), c = heroCanvas.getBoundingClientRect();
         heroCanvas.style.setProperty('--meta-w', `${Math.ceil(Math.max(0.36 * W, m.right - c.left + 26))}px`);
       }
-    } else if (!same) {
-      // desktop composition in a stand-in face: same capital height, same width
-      heroCanvas.style.setProperty('--display-size', `${(base * DRAWN.cap / cap).toFixed(2)}px`);
-      heroCanvas.style.setProperty('--hl-lh', lh.toFixed(4));
-      heroCanvas.style.setProperty('--hl-sx', sx.toFixed(4));
+    } else {
+      if (!same) {
+        // desktop composition in a stand-in face: same capital height, same width
+        heroCanvas.style.setProperty('--display-size', `${(base * DRAWN.cap / cap).toFixed(2)}px`);
+        heroCanvas.style.setProperty('--hl-lh', lh.toFixed(4));
+        heroCanvas.style.setProperty('--hl-sx', sx.toFixed(4));
+      }
+      placeDesktopHero(same ? DRAWN.lh : lh, same ? DRAWN.cap : cap);
     }
+  }
+
+  // The desktop composition is set in percentages of the artwork, and two
+  // window shapes break it. One much wider than the artwork crops its top and
+  // bottom, taking the logo or the place and time with them; a short one
+  // shrinks the small rows, which the stylesheet then holds at a readable
+  // floor, so they outgrow their slots. Where either happens the rows are
+  // re-placed inside what is visible and the name gives up just enough size
+  // to keep its gaps. At ordinary sizes every value lands on its default and
+  // nothing is set.
+  function placeDesktopHero(lhRatio, capRatio) {
+    const c = heroCanvas.getBoundingClientRect();
+    const view = heroCanvas.parentElement.getBoundingClientRect();
+    const H = c.height, crop = Math.max(0, (H - view.height) / 2);
+    const at = pc => H * pc / 100;
+    const q = sel => heroCanvas.querySelector(sel);
+    const ebH = q('.hero-eyebrow').getBoundingClientRect().height;
+    const metaH = q('.hero-meta').getBoundingClientRect().height;
+    const size = parseFloat(getComputedStyle(q('.hero-headline')).fontSize);
+
+    const logo = Math.max(at(2.237), crop + 14);
+    // the logo is a 44px tap target on touch screens, so on a short one it
+    // reaches the eyebrow's first row; the rows then start under it
+    const lr = q('.hero-logo-wrap').getBoundingClientRect(), er = q('.hero-eyebrow').getBoundingClientRect();
+    const underLogo = lr.right + 8 > er.left ? logo + lr.height + 12 : 0;
+    const eb = Math.max(at(12.78), crop + 24, underLogo);
+    const r1 = Math.max(at(23.154), eb + ebH + 14);
+    const name = Math.max(at(29.754), r1 + 18);
+    const meta = Math.min(at(84.72), H - crop - metaH - 22);
+    const r2 = Math.min(at(80.537), meta - 16);
+    // the name's ink runs from its cap-top to the second line's baseline
+    const fit = (r2 - 12 - name) / (lhRatio + capRatio);
+
+    const put = (k, v, d) => { if (Math.abs(v - d) > 0.5) heroCanvas.style.setProperty(k, `${v.toFixed(1)}px`); };
+    put('--hx-logo', logo, at(2.237));
+    put('--hx-eb', eb, at(12.78));
+    put('--hx-r1', r1, at(23.154));
+    put('--hx-name', name, at(29.754));
+    put('--hx-r2', r2, at(80.537));
+    put('--hx-meta', meta, at(84.72));
+    if (fit < size - 0.5) heroCanvas.style.setProperty('--display-size', `${Math.max(40, fit).toFixed(1)}px`);
   }
   fitHeroName();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeroName);
@@ -641,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
       h.innerHTML = 'Let&rsquo;s work<br>together';
       const btn = el('button', 'ws-explore');
       btn.textContent = 'Get in touch';
-      btn.addEventListener('click', e => { e.stopPropagation(); openMorph(); });
+      btn.addEventListener('click', e => { e.stopPropagation(); openMorph(true); });
       card.append(h, btn);
       return card;
     }
@@ -732,11 +777,29 @@ document.addEventListener('DOMContentLoaded', () => {
         .to(from, { opacity: 0.0001, scale: 0.93, duration: 0.55, ease: 'power2.in' }, 0.05);
     }
 
+    // Back to the first project, as a cross-fade in place rather than a slide
+    // back through every card.
+    function restartStack() {
+      if (galleryMode || current === 0) return;
+      const from = cards[current], to = cards[0];
+      animating = true;
+      gsap.set(to, { autoAlpha: 0, x: 0, scale: 1, zIndex: 3 });
+      gsap.timeline({ onComplete() {
+        gsap.set(from, { autoAlpha: 0, opacity: 1, scale: 1, x: 0, zIndex: 1 });
+        gsap.set(to, { zIndex: 2 });
+        current = 0;
+        paintChrome(current);
+        animating = false;
+      } })
+        .to(to, { autoAlpha: 1, duration: 0.5, ease: 'power2.out' }, 0)
+        .to(from, { opacity: 0.0001, duration: 0.4, ease: 'power1.in' }, 0);
+    }
+
     const step = (dir) => {
       if (animating || pjOpen) return;
       if (dir > 0) {
         if (current < LAST) goTo(current + 1, 1);
-        else if (!morphed) openMorph();          // past the last card -> contact
+        else if (!morphed) openMorph(true);      // past the last card -> contact
       } else {
         if (morphed) closeMorph();               // back out of contact first
         else if (current > 0) goTo(current - 1, -1);
@@ -777,9 +840,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .to(morphClose, { opacity: 1, duration: 0.3 }, 1.15);
     }
 
-    function openMorph() {
+    // fromEnd: reached by running past the last card (or its button), so closing
+    // it starts the stack over from the first project.
+    let morphFromEnd = false;
+    function openMorph(fromEnd) {
       if (animating || morphed) return;
       animating = true;
+      morphFromEnd = fromEnd === true;
       morphTl = buildMorphTl();
       morphTl.eventCallback('onComplete', () => {
         animating = false;
@@ -803,13 +870,14 @@ document.addEventListener('DOMContentLoaded', () => {
         morph.setAttribute('aria-hidden', 'true');
         morphed = false;
         animating = false;
+        if (morphFromEnd) restartStack();
       });
       morphTl.reverse();
     }
 
     // The logo flyout's Contact link lives outside this scope, so it needs a
     // way in — same hook the old drawer used for the same link.
-    window.nsOpenContact = openMorph;
+    window.nsOpenContact = () => openMorph(false);
 
     morphClose.addEventListener('click', closeMorph);
     document.addEventListener('keydown', e => {
@@ -868,32 +936,94 @@ document.addEventListener('DOMContentLoaded', () => {
     const ARROW = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true">' +
       '<path d="M1 11L11 1M11 1H3M11 1v8" stroke="currentColor" stroke-width="1.6"/></svg>';
 
+    // Pictures carry their own shape (--r), so the stylesheet can fit each to
+    // the screen. Images start on a blank and the panel loads them as they near
+    // the screen (loadPjMedia): Safari's native lazy loading doesn't always
+    // fire inside a scrolling panel, and left them showing their alt text.
+    const BLANK = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22/%3E';
+    const shape = (mm) => mm.w && mm.h ? ` width="${mm.w}" height="${mm.h}" style="--r:${(mm.w / mm.h).toFixed(4)}"` : '';
     const mediaHtml = (mm, alt) => mm.kind === 'video'
-      ? `<video src="${mm.src}"${mm.poster ? ` poster="${mm.poster}"` : ''} muted loop playsinline autoplay preload="metadata"${mm.w ? ` width="${mm.w}" height="${mm.h}"` : ''}></video>`
-      : `<img src="${mm.src}" alt="${esc(alt)}" loading="lazy" decoding="async"${mm.w ? ` width="${mm.w}" height="${mm.h}"` : ''}>`;
+      ? `<video src="${mm.src}"${mm.poster ? ` poster="${mm.poster}"` : ''} muted loop playsinline autoplay preload="metadata"${shape(mm)}></video>`
+      : `<img src="${BLANK}" data-src="${mm.src}" alt="${esc(alt)}" decoding="async"${shape(mm)}>`;
+
+    let pjLoader = null;
+    function loadPjMedia() {
+      if (pjLoader) pjLoader.disconnect();
+      const waiting = Array.from(pjBody.querySelectorAll('img[data-src]'));
+      const show = (img) => { img.src = img.dataset.src; img.removeAttribute('data-src'); };
+      if (!('IntersectionObserver' in window)) { waiting.forEach(show); return; }
+      pjLoader = new IntersectionObserver((entries) => entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        pjLoader.unobserve(en.target);
+        show(en.target);
+      }), { root: pjView, rootMargin: '150% 0px' });
+      waiting.forEach((img) => pjLoader.observe(img));
+    }
 
     const isPortrait = (mm) => mm.w && mm.h && mm.h > mm.w * 1.05;
 
     // The gallery is laid out from the pictures' own shapes: a landscape frame
-    // runs wide (the first one edge to edge), two portraits in a row share one,
-    // and a portrait on its own is held to the screen height.
+    // runs wide (the first one edge to edge), and consecutive portraits sit in
+    // rows that share one height: pairs, with a closing row of three when the
+    // run is odd, so none is left on its own beside an empty half. A portrait
+    // with no neighbour is held to the screen height.
     function galleryHtml(items, alt) {
       let html = '';
+      const row = (list) => {
+        const sum = list.reduce((t, m) => t + m.w / m.h, 0).toFixed(4);
+        return `<figure class="pj-figure"><div class="pj-duo" style="--sum:${sum};--gaps:${list.length - 1}">${list.map(m => mediaHtml(m, alt)).join('')}</div></figure>`;
+      };
       for (let i = 0; i < items.length; i++) {
-        const a = items[i], b = items[i + 1];
-        if (isPortrait(a) && b && isPortrait(b)) {
-          html += `<figure class="pj-figure"><div class="pj-duo">${mediaHtml(a, alt)}${mediaHtml(b, alt)}</div></figure>`;
-          i++;
+        if (isPortrait(items[i])) {
+          let j = i;
+          while (j < items.length && isPortrait(items[j])) j++;
+          const run = items.slice(i, j);
+          if (run.length === 1) html += `<figure class="pj-figure is-portrait">${mediaHtml(run[0], alt)}</figure>`;
+          else for (let k = 0; k < run.length;) {
+            const take = run.length - k === 3 ? 3 : 2;
+            html += row(run.slice(k, k + take));
+            k += take;
+          }
+          i = j - 1;
         } else {
-          const cls = isPortrait(a) ? ' is-portrait' : (i === 0 ? ' is-bleed' : '');
-          html += `<figure class="pj-figure${cls}">${mediaHtml(a, alt)}</figure>`;
+          html += `<figure class="pj-figure${i === 0 ? ' is-bleed' : ''}">${mediaHtml(items[i], alt)}</figure>`;
         }
       }
       return html;
     }
 
+    // Each case study is set in colours taken from its own pictures: ground,
+    // ink, tint, and how much ink the secondary text keeps (mixed into the
+    // ground). Every pair checked at 4.5:1 or better.
+    const PJ_THEMES = {
+      'Kaapi District':          ['#1f2b18', '#f3ead6', '#2b3a22', 0.75],   // the forest behind the roastery
+      'Northern Escape':         ['#101b38', '#eaf0ff', '#1b2a52', 0.75],   // the app's navy
+      'Wisebot':                 ['#e3f0fb', '#12304d', '#cde2f4', 0.75],   // its pale sky blue
+      'Goldie Bun':              ['#dcc39d', '#1d3a32', '#cdb08a', 0.80],   // kraft bag, bottle-green print
+      'Icons of Kerala':         ['#2c650a', '#f4f8e8', '#377a10', 0.80],   // Kerala green
+      'Magazine Layout':         ['#1b1b1b', '#ededed', '#2a2a2a', 0.75],   // black and white editorial
+      'Abu Crispy':              ['#0b4d92', '#fff4e6', '#0a5aa8', 0.75],   // the truck's blue
+      'Novel Cafe':              ['#5a1d12', '#f4e9dd', '#6c2a1c', 0.75],   // terracotta
+      'Yamanote Cake Box':       ['#ec8a2c', '#2a1406', '#df7a1f', 0.80],   // the box's orange
+      'Yamanote Sharing Box':    ['#e8dcd2', '#2b2523', '#dacbbd', 0.75],   // warm neutral board
+      'Osawa Biriyani in Dubai': ['#141310', '#e4c66e', '#24221b', 0.75]    // black lacquer and gold
+    };
+    const hexRgb = (h) => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+    function themeProject(p) {
+      ['--pj-ground', '--pj-ink', '--pj-tint', '--pj-muted', '--pj-rule'].forEach(v => pjView.style.removeProperty(v));
+      const t = PJ_THEMES[p.name];
+      if (!t) return;
+      const [g, ink, tint, k] = t, G = hexRgb(g), I = hexRgb(ink);
+      pjView.style.setProperty('--pj-ground', g);
+      pjView.style.setProperty('--pj-ink', ink);
+      pjView.style.setProperty('--pj-tint', tint);
+      pjView.style.setProperty('--pj-muted', `rgb(${I.map((c, i) => Math.round(c * k + G[i] * (1 - k))).join(', ')})`);
+      pjView.style.setProperty('--pj-rule', `rgba(${I.join(', ')}, 0.22)`);
+    }
+
     function renderProject(index) {
       const p = WS_PROJECTS[index];
+      themeProject(p);
       // "Next up" follows the stack the visitor is in, so a filtered view
       // never jumps to a project the pills have hidden.
       const order = WS_PROJECTS.map((_, i) => i).filter(inGroup);
@@ -945,6 +1075,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const nextBtn = pjBody.querySelector('.pj-next-btn');
       if (nextBtn) nextBtn.addEventListener('click', () => swapProject(nextIndex));
+      loadPjMedia();
 
       pjIndex = index;
     }
@@ -1078,7 +1209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const media = Array.from(pjBody.querySelectorAll('.pj-hero, .pj-figure img, .pj-figure video'));
       const items = media.map(el => el.classList.contains('pj-hero')
         ? { src: (el.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/) || [])[1], kind: 'image', label: name }
-        : { src: el.getAttribute('src'), kind: el.tagName === 'VIDEO' ? 'video' : 'image', poster: el.getAttribute('poster'), label: name });
+        : { src: el.getAttribute('data-src') || el.getAttribute('src'), kind: el.tagName === 'VIDEO' ? 'video' : 'image', poster: el.getAttribute('poster'), label: name });
       window.nsLibrary.openList(items, media.indexOf(hit), hit);
     });
 
@@ -1097,14 +1228,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const wsInner = wsSection.querySelector('.ws-inner') || wsStage;
     const DOCK_TOL = 3;
 
-    const dockTarget = () =>
-      wsInner.getBoundingClientRect().height <= innerHeight ? wsInner : wsStage;
+    const singleColumn = () => getComputedStyle(wsInner).gridTemplateColumns.trim().split(/\s+/).length < 2;
 
-    // Signed px the page has to scroll to centre the target, clamped to what
-    // the document can actually scroll.
+    // Where the section comes to rest. When it all fits it is centred. When it
+    // doesn't (one column on phones and tablets, the copy above the cards),
+    // the cards rest at the foot of the screen with as much of the copy above
+    // them as fits, instead of centred over a band of empty page below.
+    function dockPlan() {
+      const vh = innerHeight, m = Math.max(14, Math.min(32, vh * 0.035));
+      const inner = wsInner.getBoundingClientRect();
+      if (inner.height <= vh) return { el: wsInner, at: (vh - inner.height) / 2 };
+      if (!singleColumn()) return { el: wsInner, at: m };        // two columns, still too tall
+      const st = wsStage.getBoundingClientRect();
+      if (st.height > vh - 2 * m) return { el: wsStage, at: (vh - st.height) / 2 };
+      return { el: wsStage, at: vh - m - st.height };
+    }
+    const dockTarget = () => dockPlan().el;
+
+    // Signed px the page has to scroll to bring the target to its place,
+    // clamped to what the document can actually scroll.
     function dockOffset() {
-      const r = dockTarget().getBoundingClientRect();
-      const want = scrollY + r.top + r.height / 2 - innerHeight / 2;
+      const p = dockPlan(), r = p.el.getBoundingClientRect();
+      const want = scrollY + r.top - p.at;
       const max = document.documentElement.scrollHeight - innerHeight;
       return Math.max(0, Math.min(max, want)) - scrollY;
     }
@@ -1116,22 +1261,39 @@ document.addEventListener('DOMContentLoaded', () => {
       return visible >= Math.min(r.height, innerHeight) * 0.5;
     }
 
-    // The section is the last thing on the page, so the page can only scroll
-    // the target to the middle if there's at least half a screen's leftover
-    // below it. Wherever there isn't (stacked layouts, short windows), the
-    // section's bottom padding is topped up by exactly the shortfall.
+    // The section is the last thing on the page, so the page can only bring the
+    // target to its place if there's enough page left below it. Wherever there
+    // isn't, the section's bottom padding is topped up by exactly the shortfall.
     function fitDockRoom() {
       wsSection.style.paddingBottom = '';
       const base = parseFloat(getComputedStyle(wsSection).paddingBottom) || 0;
-      const t = dockTarget().getBoundingClientRect();
+      const p = dockPlan(), t = p.el.getBoundingClientRect();
       const below = wsSection.getBoundingClientRect().bottom - t.bottom;
-      const need = (innerHeight - t.height) / 2;
+      const need = innerHeight - p.at - t.height;
       if (below < need) wsSection.style.paddingBottom = `${base + need - below}px`;
     }
-    fitDockRoom();
-    window.addEventListener('resize', fitDockRoom);
-    if (document.fonts) document.fonts.ready.then(fitDockRoom);
-    window.addEventListener('load', fitDockRoom);
+
+    // Two columns: the heading is sized by the window's width, so on a short
+    // screen (a laptop, under the browser's own bars) the copy beside the cards
+    // ran taller than the window and docking cut its top and bottom. It is
+    // scaled down just enough for the column to fit.
+    const wsHead = wsSection.querySelector('.ws-headline');
+    const wsPanel = wsSection.querySelector('.ws-panel');
+    function fitWorksHead() {
+      wsSection.style.removeProperty('--ws-hl');
+      if (!wsHead || !wsPanel || singleColumn()) return;
+      const room = innerHeight - 2 * Math.max(16, Math.min(40, innerHeight * 0.045));
+      const over = wsPanel.getBoundingClientRect().height - room;
+      if (over <= 0) return;
+      const fs = parseFloat(getComputedStyle(wsHead).fontSize);
+      const hh = wsHead.getBoundingClientRect().height;
+      wsSection.style.setProperty('--ws-hl', `${Math.max(56, fs * (hh - over) / hh).toFixed(1)}px`);
+    }
+    function fitWorks() { fitWorksHead(); fitDockRoom(); }
+    fitWorks();
+    window.addEventListener('resize', fitWorks);
+    if (document.fonts) document.fonts.ready.then(fitWorks);
+    window.addEventListener('load', fitWorks);
 
     let docking = false, dockTimer = null;
     function dock() {
@@ -1142,6 +1304,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(dockTimer);
       dockTimer = setTimeout(() => { docking = false; }, 900);  // if scrollend never comes
     }
+    window.nsWorks = { dock };   // lets the layout checks dock it as a visitor would
 
     // Holds the cards still while a burst of wheel events (trackpad momentum)
     // is still arriving, so one flick moves one card and the glide into place
@@ -1172,18 +1335,18 @@ document.addEventListener('DOMContentLoaded', () => {
       // start lets the page go; carrying on past the end, after a pause,
       // opens contact the same way the last card does.
       if (galleryMode) {
-        if (dir < 0 && gAtStart()) return;
+        if (dir < 0) return;
         e.preventDefault();
-        if (dir > 0 && gAtEnd()) { if (!wheelLocked) openMorph(); holdWheel(); return; }
+        if (dir > 0 && gAtEnd()) { if (!wheelLocked) openMorph(true); holdWheel(); return; }
         const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
         gMove(-delta * (e.deltaMode === 1 ? 40 : 1.15), 0.7);
         holdWheel();
         return;
       }
 
-      // Docked: the wheel belongs to the cards. Forward always has somewhere to
-      // go (next card, or contact); backward only while there's a card behind.
-      if (dir < 0 && current === 0) return;
+      // Docked: scrolling down moves through the projects (and on to contact);
+      // scrolling up always gives the page back. The arrow keys go both ways.
+      if (dir < 0) return;
       e.preventDefault();
       if (!wheelLocked) step(dir);
       holdWheel();
@@ -1240,8 +1403,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     wsStage.setAttribute('tabindex', '0');
     wsStage.addEventListener('keydown', (e) => {
-      const fwd = ['ArrowRight', 'PageDown'].includes(e.key), back = ['ArrowLeft', 'PageUp'].includes(e.key);
+      const fwd = e.key === 'PageDown', back = e.key === 'PageUp';
       if (!fwd && !back) return;
+      e.preventDefault();
+      if (galleryMode) gMove((fwd ? -1 : 1) * gallery.clientWidth * 0.8);
+      else step(fwd ? 1 : -1);
+    });
+    // ← → step through the projects whenever the works are on screen, no click
+    // into the stage needed first.
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      if (pjOpen || e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input, textarea, [contenteditable]')) return;
+      const viewer = document.getElementById('lbx');
+      if (viewer && !viewer.hidden) return;
+      const r = wsStage.getBoundingClientRect();
+      if (!morphed && (r.bottom < innerHeight * 0.25 || r.top > innerHeight * 0.75)) return;
+      const fwd = e.key === 'ArrowRight';
+      if (morphed && fwd) return;             // contact is the end; ← backs out of it
       e.preventDefault();
       if (galleryMode) gMove((fwd ? -1 : 1) * gallery.clientWidth * 0.8);
       else step(fwd ? 1 : -1);
@@ -1456,7 +1634,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         lede.innerHTML = next;
         lede.style.opacity = '';
-        fitDockRoom();
+        fitWorks();      // the lede changed length
       }, 220);
     }
     pills.forEach(pill => {

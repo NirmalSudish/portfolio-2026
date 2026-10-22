@@ -394,3 +394,4 @@ html, body.grid-page { background-color: #3e2f1c; color: #FFD177; }
 @media (hover: none) and (pointer: coarse) {
   .grid-contact-mail { display: inline-block; padding: 8px 0; }
 }
+.grid-brands[hidden] { display: none; }

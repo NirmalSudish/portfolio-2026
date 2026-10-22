@@ -183,9 +183,9 @@ body {
   /* Small caps rows. Reference cap-heights 0.98% and 0.90% of hero height;
      Plus Jakarta Sans renders caps at 0.775em. */
   --eyebrow-size: 1.2987vh;
-  --eyebrow-size: 1.2987cqh;
+  --eyebrow-size: max(10.5px, 1.2987cqh);   /* never under a readable size */
   --meta-size: 1.1633vh;
-  --meta-size: 1.1633cqh;
+  --meta-size: max(10px, 1.1633cqh);
 }
 
 /* --------------------------------------------------------------------------
@@ -280,7 +280,7 @@ body {
    grid at all. */
 .hero-logo-wrap {
   position: absolute;
-  top: 2.237%;
+  top: var(--hx-logo, 2.237%);
   left: 1.251%;
   z-index: 20;
   width: 3.013%;
@@ -317,7 +317,7 @@ body {
 .hero-eyebrow {
   position: absolute;
   left: 6.033%;            /* ink 6.083% less the 0.075em left bearing */
-  top: 12.780%;            /* cap-top 12.864% less the 0.15em ink offset */
+  top: var(--hx-eb, 12.780%);            /* cap-top 12.864% less the 0.15em ink offset */
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -347,8 +347,9 @@ body {
   opacity: 0.9;
 }
 
-.hero-rule-top    { top: 23.154%; }
-.hero-rule-bottom { top: 80.537%; }
+/* var(): main.js re-places these only where a short or very wide window needs it */
+.hero-rule-top    { top: var(--hx-r1, 23.154%); }
+.hero-rule-bottom { top: var(--hx-r2, 80.537%); }
 
 /* --------------------------------------------------------------------------
    5. Script signature
@@ -401,7 +402,7 @@ body {
 .hero-headline {
   position: absolute;
   left: 5.467%;            /* ink 5.742% less the 0.0175em left bearing */
-  top: 29.754%;
+  top: var(--hx-name, 29.754%);
   z-index: 10;
   margin: 0;
   margin-top: -0.0725em;   /* lands the cap-top, not the line box, on 29.754% */
@@ -440,7 +441,7 @@ body {
 .hero-meta {
   position: absolute;
   left: 6.039%;
-  top: 84.720%;
+  top: var(--hx-meta, 84.720%);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -1087,7 +1088,7 @@ div.rep-card { cursor: default; }
      (which runs 3.46x the font size). The column is ~39vw - 118px, so the
      largest size it can hold is (39vw - 118px) / 3.46 — hence the middle term.
      Above ~1500px the 153.6px cap wins and the two headings match exactly. */
-  font-size: clamp(56px, calc(11.2vw - 34px), 153.6px);
+  font-size: var(--ws-hl, clamp(56px, calc(11.2vw - 34px), 153.6px));
   font-weight: 500;
   line-height: 1.1;
   text-transform: uppercase;
@@ -1316,7 +1317,7 @@ div.rep-card { cursor: default; }
   .ws { padding: 70px 80px; gap: 80px; }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .ws-inner { grid-template-columns: 1fr; gap: 2rem; }
   .ws-headline { font-size: 122.88px; line-height: 1.1; }
   .ws-panel { gap: 26px; }
@@ -1495,7 +1496,7 @@ div.rep-card { cursor: default; }
   --pj-ground: #FFD177;
   --pj-tint: #FFC451;
   --pj-rule: rgba(62, 47, 28, 0.22);
-  --pj-muted: rgba(62, 47, 28, 0.58);
+  --pj-muted: rgba(62, 47, 28, 0.75);   /* main.js sets all five per project */
   --pj-gut: clamp(24px, 6.2vw, 120px);
   --pj-display: "Anton", sans-serif;
   --pj-sans: "Plus Jakarta Sans", sans-serif;
@@ -1652,7 +1653,7 @@ div.rep-card { cursor: default; }
   text-transform: uppercase;
 }
 
-.pj-num { color: rgba(62, 47, 28, 0.38); }
+.pj-num { color: var(--pj-muted); }
 
 /* --- image blocks --------------------------------------------------------- */
 
@@ -1740,7 +1741,7 @@ div.rep-card { cursor: default; }
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(62, 47, 28, 0.12);
+  background: rgba(0, 0, 0, 0.12);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1762,8 +1763,8 @@ div.rep-card { cursor: default; }
   height: 52px;
   border: none;
   border-radius: 50%;
-  background: #3e2f1c;
-  color: #FFD177;
+  background: var(--pj-ink, #3e2f1c);
+  color: var(--pj-ground, #FFD177);
   font-size: 25px;
   line-height: 1;
   display: flex;
@@ -1954,7 +1955,7 @@ div.rep-card { cursor: default; }
 .ws-gallery .ws-arrow { opacity: 1; pointer-events: auto; z-index: 2; }
 .ws-gallery .ws-arrow:disabled { opacity: 0.25; pointer-events: none; }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .ws-cats-lib { margin-top: -16px; }
   .ws-gtrack { gap: 8px; }
   .ws-gitem { border-radius: 12px; }
@@ -2072,10 +2073,10 @@ div.rep-card { cursor: default; }
   .rep-head { font-size: min(122.88px, 20vh); line-height: 0.9; }
   .rep-head .rv-word { padding-bottom: 0.07em; }
 }
-@media (min-width: 572px) and (max-width: 900px) {
+@media (min-width: 572px) and (max-width: 1024px) {
   .ws-headline { font-size: min(122.88px, 17vh); line-height: 1.1; }
 }
-@media (max-width: 900px) and (max-height: 600px) {
+@media (max-width: 1024px) and (max-height: 600px) {
   .ws-stage { width: min(100%, calc((100svh - 48px) * 1.5)); margin-inline: auto; }
 }
 
@@ -2138,21 +2139,8 @@ div.rep-card { cursor: default; }
   .pj-duo { grid-template-columns: 1fr; }
 }
 
-/* Phones on their side: every picture fits the screen height and shows
-   whole, centred, rather than running two or three screens tall. */
+/* Phones on their side: the next-up picture fits the screen too. */
 @media (orientation: landscape) and (max-height: 600px) {
-  .pj-figure.is-bleed { padding: 0 var(--pj-gut); }
-  .pj-figure img, .pj-figure video,
-  .pj-figure.is-bleed img, .pj-figure.is-bleed video,
-  .pj-figure.is-portrait img, .pj-figure.is-portrait video {
-    width: auto;
-    max-width: 100%;
-    max-height: 88vh;
-    max-height: 88svh;
-    margin-inline: auto;
-    border-radius: 16px;
-  }
-  .pj-duo { align-items: center; }
   .pj-next-shot { height: 72svh; }
 }
 
@@ -2172,13 +2160,122 @@ div.rep-card { cursor: default; }
 /* Case-study pictures open full screen in the viewer. */
 .pj-hero, .pj-figure img, .pj-figure video { cursor: zoom-in; }
 
-/* Phones on their side keep the desktop hero, where the small rows scale
-   with its height and would drop to 6-7px. Held at a readable floor. */
-@media (orientation: landscape) and (max-height: 600px) {
-  .hero-canvas {
-    --eyebrow-size: max(10.5px, 1.2987cqh);
-    --meta-size: max(10px, 1.1633cqh);
+
+
+
+/* ==========================================================================
+   FIT TO EVERY SCREEN
+   Same layouts as above; these only keep each part inside the window it is
+   shown in, at the sizes where it used to spill.
+   ========================================================================== */
+
+/* --- Works, two columns on a short screen -------------------------------- */
+/* main.js sizes the heading to the height left over; the pills and the gaps
+   tighten a little first, so the heading gives up as little as possible. */
+@media (min-width: 1025px) and (max-height: 820px) {
+  .ws-panel { gap: 24px; }
+  .ws-cats-lib { margin-top: -20px; }
+  .ws-pill { padding: 9px 18px; }
+}
+
+/* --- Works, small tablets and phones on their side ------------------------ */
+/* the pill rows swipe sideways, as on phones, instead of wrapping */
+@media (min-width: 572px) and (max-width: 767px) {
+  .ws-cats {
+    align-self: stretch;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -80px;
+    padding: 2px 80px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
-  /* the taller eyebrow pushes its rule down, so the two keep their gap */
-  .hero-rule-top { top: max(23.154%, calc(12.78% + 4.79 * var(--eyebrow-size) + 14px)); }
+  .ws-cats::-webkit-scrollbar { display: none; }
+  .ws-pill { flex: 0 0 auto; }
+  .ws-inner { grid-template-columns: minmax(0, 1fr); }
+  .ws-panel { min-width: 0; }
+}
+
+/* --- Hero on a short landscape screen -------------------------------------- */
+/* Fills the screen rather than running past it; main.js re-places the rows
+   and fits the name to what is left. */
+@media (orientation: landscape) and (max-height: 559px) {
+  .hero-section { min-height: 300px; }
+}
+
+/* --- Contact on a short landscape screen ------------------------------------ */
+@media (orientation: landscape) and (max-height: 500px) {
+  .ws-morph-contact {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-content: center;
+    gap: 28px;
+    padding: 24px 88px 24px 40px;
+  }
+  .ws-morph-title { font-size: min(150px, 30vh); }
+  .ws-morph-details { gap: 14px; }
+  .ws-morph-mail { font-size: clamp(18px, 2.4vw, 26px); }
+  .ws-morph-close { top: 16px; right: 16px; width: 48px; height: 48px; }
+}
+
+/* --- Statement buttons on the narrowest phones ---------------------------- */
+@media (max-width: 571px) {
+  .rep-actions { grid-template-columns: repeat(2, minmax(0, 175.5px)); }
+  .rep-btn { width: 100%; padding: 0 12px; }
+}
+
+/* --- Case study pictures ---------------------------------------------------- */
+/* Each picture is as wide as its column allows but never taller than the
+   screen, so it is always seen whole. --r is its own width/height, set where
+   the gallery is built. An edge-to-edge picture that has to narrow to fit
+   picks up the rounded corners of the others (the clamp is 0 while it still
+   spans the screen, 16px once it doesn't). */
+.pj-figure img, .pj-figure video {
+  width: min(100%, calc(92vh * var(--r, 1.5)));
+  width: min(100%, calc(92svh * var(--r, 1.5)));
+  height: auto;
+  margin-inline: auto;
+}
+.pj-figure.is-bleed img, .pj-figure.is-bleed video {
+  border-radius: clamp(0px, calc((100vw - 92svh * var(--r, 1.5) - 20px) * 999), 16px);
+}
+.pj-duo { align-items: center; }
+.pj-duo img, .pj-duo video { justify-self: center; }
+
+/* --- Works filter pills ---------------------------------------------------- */
+/* Both rows live in one block. Beside the cards (two columns) the seven pills
+   flow together, so lines fill evenly instead of each row leaving a single
+   pill stranded on a line of its own; stacked (tablets, phones) the two rows
+   stay separate, as one-line rows or sideways swipes. One 10px gap throughout. */
+.ws-filters { display: flex; flex-direction: column; gap: 10px; align-self: stretch; min-width: 0; }
+.ws-filters .ws-cats-lib { margin-top: 0; }
+@media (min-width: 1025px) {
+  .ws-filters { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .ws-filters > .ws-cats { display: contents; }
+}
+/* the swipe rows carry 2px of padding each, so their gap is trimmed to match */
+@media (max-width: 767px) { .ws-filters { gap: 6px; } }
+
+/* --- Case study pairs -------------------------------------------------------- */
+/* A pair sits as one row: both pictures at the same height, one even gap,
+   together as wide as the column allows and never taller than the screen.
+   --sum is the row's width/height ratios added and --gaps its gap count,
+   both set in main.js. */
+.pj-duo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(10px, 1.1vw, 16px);
+  container-type: inline-size;
+}
+.pj-duo img, .pj-duo video {
+  flex: none;
+  width: calc(var(--r, 1) * min(92vh, (100cqw - var(--gaps, 1) * clamp(10px, 1.1vw, 16px)) / var(--sum, 2)));
+  width: calc(var(--r, 1) * min(92svh, (100cqw - var(--gaps, 1) * clamp(10px, 1.1vw, 16px)) / var(--sum, 2)));
+  height: auto;
+  margin: 0;
+}
+/* phones: one above the other, each as wide as the column */
+@media (max-width: 571px) {
+  .pj-duo { flex-direction: column; align-items: center; }
+  .pj-duo img, .pj-duo video { width: min(100%, calc(92svh * var(--r, 1))); }
 }

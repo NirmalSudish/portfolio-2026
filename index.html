@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat:wght@500;600;700&family=Ruthie&family=Allura&family=Space+Mono&family=Oswald:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=202610222105">
+  <link rel="stylesheet" href="style.css?v=202610230410">
 
   <!-- ==========================================================================
        LOGO NAVIGATION MORPH
@@ -378,6 +378,7 @@
 
         <!-- Two rows, one choice: a project filter shows the card stack, a gallery
              category swaps it for the gallery. Choosing either row switches. -->
+        <div class="ws-filters">
         <div class="ws-cats" id="wsCats" role="tablist" aria-label="Projects and gallery">
           <button class="ws-pill is-active" role="tab" aria-selected="true" data-group="all"
                   data-headline="Selected<br>work,<br>up close">All projects</button>
@@ -395,6 +396,7 @@
                   data-headline="Selected<br>work,<br>in depth">3D<span>3</span></button>
           <button class="ws-pill" role="tab" aria-selected="false" data-lib="experimental"
                   data-headline="Selected<br>work,<br>off brief">Experimental<span>6</span></button>
+        </div>
         </div>
       </div>
 
@@ -599,6 +601,6 @@
     })();
   </script>
 
-  <script src="main.js?v=202610222000"></script>
+  <script src="main.js?v=202610230410"></script>
 </body>
 </html>
