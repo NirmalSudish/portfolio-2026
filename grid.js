@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const list = kinds.join(', ').replace(/, ([^,]*)$/, ' and $1');
       name = brand === '*' ? 'Brands' : brand;
       line = brand === '*'
-        ? `Work made for clients: ${mine.length} pieces of ${list}.`
-        : `Everything made for ${brand}: ${mine.length} piece${mine.length === 1 ? '' : 's'} of ${list}.`;
+        ? `Work made for clients, in ${list}.`
+        : `Everything made for ${brand}, in ${list}.`;
     }
     document.body.classList.toggle('is-cat', !!CATS[cat] || !!brand);
     title.textContent = name;
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!counts.size) brand = null;
     brandRow.hidden = counts.size === 0;
     const list = [...counts].sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0]));
-    const chip = (key, label, n) => `<button class="grid-brand${key === brand ? ' is-active' : ''}" type="button" data-brand="${key}" aria-pressed="${key === brand}">${label}<span>${n}</span></button>`;
+    const chip = (key, label, n) => `<button class="grid-brand${key === brand ? ' is-active' : ''}" type="button" data-brand="${key}" aria-pressed="${key === brand}">${label}</button>`;
     brandRow.innerHTML = `<span class="grid-brands-label">Brands</span>` + chip('*', 'All brands', pool.length) + list.map(([k, n]) => chip(k, k, n)).join('');
   }
 

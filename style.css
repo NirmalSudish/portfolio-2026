@@ -1172,10 +1172,12 @@ div.rep-card { cursor: default; }
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  /* the outgoing picture holds until the incoming one has covered it, then
+     goes at once, so the card never dips through a half-and-half fade */
+  transition: opacity 0s linear 1.2s;
 }
 
-.ws-photo.is-front { opacity: 1; }
+.ws-photo.is-front { opacity: 1; z-index: 1; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
 
 /* A frame far from the card's shape: whole, on a dark mat. */
 .ws-photo.is-whole {
@@ -2391,4 +2393,46 @@ div.rep-card { cursor: default; }
 @media (min-width: 572px) and (max-width: 1024px) {
   .m-contact { padding: 0 24px 24px; }
   .m-contact-panel { padding: 64px 56px 56px; }
+}
+
+/* --- Project cards: desktop and phone details ------------------------------ */
+/* Desktop: no arrows, the pictures play on their own (main.js). */
+@media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
+  .ws-card .ws-arrow { display: none; }
+}
+/* Phones and tablets: the whole card opens the project, so no button on it. */
+@media (max-width: 1024px) {
+  .ws-card .ws-open { display: none; }
+}
+/* the hover pill, a size down */
+.ws-cursor { padding: 14px 24px; border-width: 1.5px; font-size: 11.5px; letter-spacing: 0.12em; }
+
+/* The page's own ground is the site's yellow, so the hairline seam a phone's
+   fractional screen height opens between two sections shows yellow, not dark. */
+html, body { background-color: #FFD177; }
+
+/* --- Phones and tablets: clear project arrows either side of the card ------ */
+@media (max-width: 1024px) {
+  .ws-card .ws-arrow {
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid rgba(255, 209, 119, 0.55);
+    background: #3e2f1c;
+    color: #FFD177;
+    font-size: 20px;
+    box-shadow: 0 6px 16px -6px rgba(30, 22, 10, 0.6);
+  }
+  .ws-card .ws-arrow:hover, .ws-card .ws-arrow:active { background: #2a1f12; }
+  .ws-card .ws-arrow.prev { left: 10px; }
+  .ws-card .ws-arrow.next { right: 10px; }
+}
+
+/* The pictures crossfade one over the other (z 0/1); everything the card
+   carries on top of them (shade, bars, title, arrows, tags) sits above both. */
+.ws-card > .ws-veil, .ws-card > .ws-segs, .ws-card > .ws-title,
+.ws-card > .ws-arrow, .ws-card > .ws-bottom { z-index: 2; }
+
+/* Phones and tablets: no logo in the hero (its menu is a desktop hover). */
+@media (max-width: 1024px) {
+  .hero-logo-wrap { display: none; }
 }

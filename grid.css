@@ -395,3 +395,11 @@ html, body.grid-page { background-color: #3e2f1c; color: #FFD177; }
   .grid-contact-mail { display: inline-block; padding: 8px 0; }
 }
 .grid-brands[hidden] { display: none; }
+
+/* Phones and tablets: no logo. */
+@media (max-width: 1024px) {
+  .grid-logo { display: none; }
+}
+/* A brand or category name can run to two lines; open the title's leading
+   so the lines don't touch (0.8 suited the one-word GRID). */
+.grid-page.is-cat .grid-title { line-height: 1; }

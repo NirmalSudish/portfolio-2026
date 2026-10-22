@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nirmal Sudish — Design For A Brighter Everyday</title>
   <meta name="description" content="Portfolio of Nirmal Sudish, a multi-disciplinary designer in Dubai, UAE: brand identity, packaging, motion and UI/UX.">
-  <link rel="icon" href="assets/brand/nirmal-plate.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/brand/nirmal-plate.svg?v=3" type="image/svg+xml">
   
   <!-- Modern Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat:wght@500;600;700&family=Ruthie&family=Allura&family=Space+Mono&family=Oswald:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=202610230830">
+  <link rel="stylesheet" href="style.css?v=202610231040">
 
   <!-- ==========================================================================
        LOGO NAVIGATION MORPH
@@ -39,7 +39,7 @@
     .navmorph-scrim {
       position: absolute;
       inset: 0;
-      background-color: #14100c;
+      background-color: transparent;   /* catches taps to close; the page stays as it is */
       opacity: 0;
       transition: opacity 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
     }
@@ -113,8 +113,8 @@
       height: 56px;
       transform: translateY(-50%);
       background-color: #101010;
-      -webkit-mask: url("assets/brand/nirmal-mark.svg") center / contain no-repeat;
-      mask: url("assets/brand/nirmal-mark.svg") center / contain no-repeat;
+      -webkit-mask: url("assets/brand/nirmal-mark.svg?v=3") center / contain no-repeat;
+      mask: url("assets/brand/nirmal-mark.svg?v=3") center / contain no-repeat;
       transition:
         right 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
         width 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -183,7 +183,7 @@
            #navMorph panel at the foot of this file out of this exact box. -->
       <div class="hero-logo-wrap" id="navTrigger">
         <a href="#hero" class="hero-logo" aria-label="Nirmal Sudish — home">
-          <img src="assets/brand/nirmal-plate.svg" alt="" width="53" height="53">
+          <img src="assets/brand/nirmal-plate.svg?v=3" alt="" width="53" height="53">
         </a>
       </div>
 
@@ -384,18 +384,18 @@
                   data-headline="Selected<br>work,<br>up close">All projects</button>
           <button class="ws-pill" role="tab" aria-selected="false" data-group="ux"
                   data-headline="Selected<br>work,<br>in use">UI/UX &amp; branding</button>
+          <button class="ws-pill" role="tab" aria-selected="false" data-lib="visual"
+                  data-headline="Selected<br>work,<br>in colour">Visual design</button>
           <button class="ws-pill" role="tab" aria-selected="false" data-group="print"
                   data-headline="Selected<br>work,<br>in print">Print &amp; packaging</button>
         </div>
         <div class="ws-cats ws-cats-lib" role="tablist" aria-label="Gallery">
-          <button class="ws-pill" role="tab" aria-selected="false" data-lib="visual"
-                  data-headline="Selected<br>work,<br>in colour">Visual design<span>39</span></button>
           <button class="ws-pill" role="tab" aria-selected="false" data-lib="motion"
-                  data-headline="Selected<br>work,<br>in motion">Motion<span>16</span></button>
+                  data-headline="Selected<br>work,<br>in motion">Motion</button>
           <button class="ws-pill" role="tab" aria-selected="false" data-lib="3d"
-                  data-headline="Selected<br>work,<br>in depth">3D<span>3</span></button>
+                  data-headline="Selected<br>work,<br>in depth">3D</button>
           <button class="ws-pill" role="tab" aria-selected="false" data-lib="experimental"
-                  data-headline="Selected<br>work,<br>off brief">Experimental<span>6</span></button>
+                  data-headline="Selected<br>work,<br>off brief">Experimental</button>
         </div>
         </div>
       </div>
@@ -617,6 +617,6 @@
     })();
   </script>
 
-  <script src="main.js?v=202610230820"></script>
+  <script src="main.js?v=202610231010"></script>
 </body>
 </html>

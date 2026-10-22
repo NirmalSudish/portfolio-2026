@@ -742,6 +742,26 @@ document.addEventListener('DOMContentLoaded', () => {
         .forEach((s, i) => s.classList.toggle('is-filled', i <= target));
     }
 
+    // Every size: the card on top plays through its own pictures, one every
+    // few seconds, back to the first after the last. (On desktop the arrows
+    // are gone; on phones they move between projects.)
+    let slideTimer = null;
+    function restartSlides() {
+      clearInterval(slideTimer);
+      slideTimer = setInterval(() => {
+        if (pjOpen || morphed || animating || document.hidden) return;
+        const card = cards[current];
+        if (!card || !card._images || card._images.length < 2) return;
+        const r = wsStage.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        const delta = card._shown >= card._images.length - 1 ? -card._shown : 1;
+        // the next picture is loaded before the fade starts, so it never pops in
+        const pre = new Image();
+        pre.onload = pre.onerror = () => { if (cards[current] === card && !pjOpen) shiftImage(card, delta); };
+        pre.src = card._images[card._shown + delta];
+      }, 6500);
+    }
+
     /* ---- stack state ---- */
 
     let current = 0;
@@ -750,6 +770,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function paintChrome(idx) {
       allCards.forEach(c => c.classList.toggle('is-active', c === cards[idx] && !!c.dataset.count));
       dots.forEach(d => d.classList.toggle('is-active', Number(d.dataset.index) === idx));
+      // a tick later: the first paint runs before the words below are defined
+      queueMicrotask(() => paintHeading(idx));
+    }
+
+    // The heading and the line under it name the project on top and change
+    // with it; on the closing card they invite contact instead.
+    const wsHeadEl = document.getElementById('wsHeadline');
+    const wsLedeEl = document.querySelector('.ws-lede');
+    let headingKey = null, headingTimer = null;
+    function paintHeading(idx) {
+      if (!wsHeadEl || !wsLedeEl) return;
+      const pi = projCards.indexOf(cards[idx]);
+      const p = pi >= 0 ? WS_PROJECTS[pi] : null;
+      const key = p ? p.name : 'cta';
+      if (key === headingKey) return;
+      const first = headingKey === null;
+      headingKey = key;
+      const title = p ? esc(p.name) : 'Let\u2019s work<br>together';
+      const line = p ? esc((PJ_COPY[p.name] || {}).summary || p.description)
+                     : 'Brand identities, packaging and interfaces for caf\u00e9s, hotels and brands. Tell me about yours.';
+      const swap = () => {
+        wsHeadEl.innerHTML = title;
+        wsLedeEl.innerHTML = line;
+        if (typeof fitWorks === 'function') fitWorks();
+      };
+      clearTimeout(headingTimer);
+      if (first) { swap(); return; }
+      [wsHeadEl, wsLedeEl].forEach(el => { el.style.transition = 'opacity 0.22s ease'; el.style.opacity = '0'; });
+      headingTimer = setTimeout(() => {
+        swap();
+        [wsHeadEl, wsLedeEl].forEach(el => { el.style.opacity = ''; });
+      }, 230);
     }
 
     gsap.set(cards[0], { autoAlpha: 1, x: 0, scale: 1, zIndex: 2 });
@@ -773,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
           current = next;
           paintChrome(current);
           animating = false;
+          restartSlides();       // a fresh project gets its full first beat
         }
       })
         .to(to, { x: '0%', scale: 1, duration: 0.6, ease: 'power3.out' }, 0)
@@ -994,6 +1047,66 @@ document.addEventListener('DOMContentLoaded', () => {
       return html;
     }
 
+    // Words for each project: a one-line summary for the works panel's heading
+    // and fuller case-study text, written from what the pictures show.
+    const PJ_COPY = {
+      'Kaapi District': {
+        summary: 'A heritage coffee brand from South India: a roasting-house wordmark, brand guidelines and an online store.',
+        more: ['The work runs from the mark itself, a roasting house drawn in line under an ESTD 2022 seal, to a brand standards manual set against the hills the coffee grows on.',
+               'The identity then carries into the shop: an online store selling the brand\u2019s T-shirts, cups, mugs, paper bags and coffee packs, every product shot in the same warm palette.']
+      },
+      'Northern Escape': {
+        summary: 'A booking app for jet ski and snowmobile rentals in Ontario, from user research to finished screens.',
+        more: ['It starts with the problem: booking power-sport rentals online was slow, unclear and hard to trust. A persona, a young graphic designer chasing his next adrenaline rush, maps the goals and pain points the app has to answer.',
+               'From there the work moves through low-fidelity wireframes and a type and colour system, built on the XIROD display face and a deep navy palette, to the final interface: browsing the machines, comparing prices and reserving in a few steps.']
+      },
+      'Wisebot': {
+        summary: 'An AI help-line app offering support and guidance, designed from research and persona to high-fidelity screens.',
+        more: ['Research came first: a competitive analysis of existing support apps, and a persona, Alex Joe, who struggled to find help that felt safe and approachable. A storyboard turned his day into the moments where the app should step in.',
+               'The interface grew from low-fidelity wireframes into high-fidelity screens, set in Nunito with a calm palette of sky blues, around a friendly robot character that makes the conversation feel less clinical.']
+      },
+      'Goldie Bun': {
+        summary: 'Branding for a boutique burger concept: a bottle-green script wordmark on kraft, from bags to the counter.',
+        more: ['The identity pairs a hand-lettered Goldie Bun script with a bold, simple burger drawing, printed in one bottle green on natural kraft.',
+               'It runs across takeaway bags, business cards, a poster with the line \u201cBite into happiness, one bun at a time\u201d and a green-tiled counter where the wordmark sits above the kitchen.']
+      },
+      'Icons of Kerala': {
+        summary: 'A digital art collection of flat icons for everyday Kerala: the bus, the houseboat, the auto-rickshaw and chai.',
+        more: ['It began with a mind map of what makes Kerala, its colours, tourism, everyday life, wildlife, food and history, and a concept board of the photographs behind each idea.',
+               'Every icon follows the same rules: bold strokes, flat colour and a white offset border, drawn over a construction grid. The set includes the red-and-yellow KSRTC bus, the houseboat on the backwaters, the green auto-rickshaw and the steel tea pot with its glass of chai, each with a short story of its place in Kerala life.']
+      },
+      'Magazine Layout': {
+        summary: 'An editorial feature on Eminem: bold type, black-and-white photography and plenty of white space.',
+        more: ['The cover splits a black-and-white portrait with a stacked EM / IN / EM headline, and a darker alternative runs it as The Rap God.',
+               'Inside, the spreads balance dense columns of text with large cut-out photographs, pull quotes in heavy type and generous margins, so the pages read like print rather than screen.']
+      },
+      'Abu Crispy': {
+        summary: 'A full identity for a Dubai fried-chicken food truck, built around a cheeky chicken mascot in red and blue.',
+        more: ['The mark is a chicken in sunglasses and a red cap, drumstick in hand, under an arched ABU CRISPY wordmark, drawn to work on the brand\u2019s blue and on its red.',
+               'A brand guide sets out the fonts and the palette of red, orange, white, blue and yellow, and the identity is shown where it lives: wrapped around the red food truck and on the team\u2019s uniforms.']
+      },
+      'Novel Cafe': {
+        summary: 'A warm, refined identity for a specialty caf\u00e9 in Sharjah, in terracotta and cream with a custom \u00d8 mark.',
+        more: ['The logo replaces the O of NOVEL with a slashed circle, which also works alone as a stamp on coasters and cups.',
+               'The terracotta runs through the caf\u00e9 itself, from the glass storefront to the bright counter and the staff aprons, and through the printed pieces: business cards, paper bags and takeaway cups.']
+      },
+      'Yamanote Cake Box': {
+        summary: 'Packaging for a specialty cake by Yamanote Atelier and Chef Nouel Catis, in orange and mint with drip shapes.',
+        more: ['The lid drips mint over orange like icing, and the sides carry a fine topographic pattern of the chef\u2019s monogram.',
+               'The same language wraps a matching bottle, so the cake and its drink sit together as a set, finished on the cake itself with a chocolate seal pressed with the Yamanote mark.']
+      },
+      'Yamanote Sharing Box': {
+        summary: 'A range of sharing boxes for Yamanote Atelier: natural board, a refined logo and a scalloped seal.',
+        more: ['The boxes are built for a spread of croissants, mini burgers, sandwiches and wraps, divided into neat compartments and closed with a band and a scalloped Yamanote seal.',
+               'Kept deliberately soft and warm, the board and cream tones let the food carry the colour.']
+      },
+      'Osawa Biriyani in Dubai': {
+        summary: 'Branding and menus for Chef Takamasa Osawa\u2019s biryani pop-up in Dubai, Japanese calligraphy meeting South Asian heritage.',
+        more: ['Chef Osawa runs a Michelin Bib Gourmand biryani counter in Tokyo. For his Dubai pop-up at Yamanote Atelier the identity sets his name in brush calligraphy, \u5927\u6fa4, beside crimson and gold.',
+               'The work covers a lit wall sign, a launch poster with a QR code to book, an easel display, an editorial-style menu of the biryanis and sides, and a page telling the founder\u2019s story.']
+      }
+    };
+
     // Each case study is set in colours taken from its own pictures: ground,
     // ink, tint, and how much ink the secondary text keeps (mixed into the
     // ground). Every pair checked at 4.5:1 or better.
@@ -1051,6 +1164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
               <p class="pj-label">${esc(p.kicker)}</p>
               <p class="pj-lede">${esc(p.description)}</p>
+              ${((PJ_COPY[p.name] || {}).more || []).map(t => `<p class="pj-lede">${esc(t)}</p>`).join('')}
               ${p.link ? `<a class="pj-link" href="${p.link.href}" target="_blank" rel="noopener">
                 ${esc(p.link.label)}${ARROW}</a>` : ''}
             </div>
@@ -1342,6 +1456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // else the wheel (a tablet's trackpad, a small window) just scrolls the page.
     const desktopUI = window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)');
     const stackedUI = window.matchMedia('(max-width: 1024px)');
+    restartSlides();
     window.addEventListener('wheel', (e) => {
       if (!desktopUI.matches) return;
       if (pjOpen || morphed) return;         // those panels handle their own wheel
@@ -1714,7 +1829,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setMode(null);
           } else if (!applyFilter(group)) return;
         }
-        swapLede(!!pill.dataset.lib);
         pills.forEach(p => {
           p.classList.remove('is-active');
           p.setAttribute('aria-selected', 'false');
@@ -1723,16 +1837,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pill.setAttribute('aria-selected', 'true');
         pill.blur();
 
-        const next = pill.dataset.headline;
-        if (next && headline) {
-          headline.style.opacity = '0';
-          headline.style.transform = 'translateY(6px)';
-          setTimeout(() => {
-            headline.innerHTML = next;
-            headline.style.opacity = '1';
-            headline.style.transform = 'translateY(0)';
-          }, 220);
-        }
       });
     });
   }
