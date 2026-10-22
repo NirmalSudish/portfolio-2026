@@ -2279,3 +2279,55 @@ div.rep-card { cursor: default; }
   .pj-duo { flex-direction: column; align-items: center; }
   .pj-duo img, .pj-duo video { width: min(100%, calc(92svh * var(--r, 1))); }
 }
+
+/* --- "View project" pill that follows the mouse over a project card --------- */
+.ws-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 26px 44px;
+  border: 2px solid #FFD177;
+  border-radius: 999px;
+  background: #3e2f1c;
+  color: #FFD177;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 18px 40px -12px rgba(30, 22, 10, 0.55);
+  visibility: hidden;
+}
+/* the pill is the pointer while it shows; the card's own buttons keep theirs */
+.ws-stage.has-cursor .ws-card.is-active { cursor: none; }
+.ws-stage.has-cursor .ws-card.is-active button { cursor: pointer; }
+
+/* --- Experience cards on phones -------------------------------------------- */
+/* The source fixes each card at 160px with a 120px column inside 40px of
+   padding, which is 40px more than the card holds, so the date sat on the
+   card's bottom edge. Here the card is as tall as its content: logo left,
+   role over date right, both vertically centred, the date in the flow. */
+@media (max-width: 571px) {
+  .rep-grid { grid-auto-rows: auto; }
+  .rep-card {
+    height: auto;
+    min-height: 148px;
+    padding: 14px 20px 14px 0;
+    align-items: center;
+  }
+  .rep-logo { flex: none; }
+  .rep-meta {
+    height: auto;
+    justify-content: center;
+    gap: 14px;
+    min-width: 0;
+  }
+  .rep-role div, .rep-role strong { line-height: 1.3; }
+  .rep-date { line-height: 1.3; }
+}

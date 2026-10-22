@@ -1316,7 +1316,11 @@ document.addEventListener('DOMContentLoaded', () => {
       wheelIdle = setTimeout(() => { wheelLocked = false; }, 260);
     };
 
+    // Desktops and laptops only: a mouse or trackpad on a wide screen. Anywhere
+    // else the wheel (a tablet's trackpad, a small window) just scrolls the page.
+    const desktopUI = window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)');
     window.addEventListener('wheel', (e) => {
+      if (!desktopUI.matches) return;
       if (pjOpen || morphed) return;         // those panels handle their own wheel
       if (docking) { e.preventDefault(); holdWheel(); return; }
       if (!engaged()) return;                // page scrolls normally
@@ -1364,6 +1368,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const settle = () => {
       docking = false;
+      // Phones and tablets scroll freely: a jump after the finger lifts landed
+      // the cards at the foot of the screen and sliced the heading under the
+      // status bar. Desktops and laptops still settle the section in place.
+      if (!desktopUI.matches) return;
       if (pjOpen || morphed || !engaged()) return;
       const off = dockOffset();
       if (Math.abs(off) > DOCK_TOL && Math.sign(off) === lastDir) dock();
@@ -1400,6 +1408,38 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Math.abs(dx) > 55) step(dx > 0 ? 1 : -1);
     });
     wsStage.addEventListener('pointercancel', () => { dragging = false; });
+
+    // A "View project" pill rides with the mouse over a project card, in the
+    // site's brown and yellow. Desktops and laptops only; it steps aside over the card's own
+    // buttons, while dragging, and once a case study or contact is open.
+    {
+      const pill = document.createElement('div');
+      pill.className = 'ws-cursor';
+      pill.setAttribute('aria-hidden', 'true');
+      pill.innerHTML = '<span>View project</span>';
+      document.body.appendChild(pill);
+      gsap.set(pill, { xPercent: -50, yPercent: -50, scale: 0.6, autoAlpha: 0 });
+      const ease = reduceMotion ? 0.01 : 0.35;
+      const toX = gsap.quickTo(pill, 'x', { duration: ease, ease: 'power3' });
+      const toY = gsap.quickTo(pill, 'y', { duration: ease, ease: 'power3' });
+      let shown = false;
+      const show = (on) => {
+        if (on === shown) return;
+        shown = on;
+        gsap.to(pill, { autoAlpha: on ? 1 : 0, scale: on ? 1 : 0.6, duration: reduceMotion ? 0.01 : 0.3, ease: on ? 'back.out(1.6)' : 'power2.in', overwrite: 'auto' });
+        wsStage.classList.toggle('has-cursor', on);
+      };
+      wsStage.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        if (!shown) gsap.set(pill, { x: e.clientX, y: e.clientY });
+        toX(e.clientX); toY(e.clientY);
+        const card = e.target.closest('.ws-card.is-active[data-count]');
+        show(desktopUI.matches && !!card && !e.target.closest('button') && !wsStage.hasPointerCapture(e.pointerId) && !pjOpen && !morphed && !galleryMode);
+      });
+      wsStage.addEventListener('pointerleave', () => show(false));
+      wsStage.addEventListener('pointerdown', () => show(false));
+      window.addEventListener('scroll', () => { if (shown && !wsStage.matches(':hover')) show(false); }, { passive: true });
+    }
 
     wsStage.setAttribute('tabindex', '0');
     wsStage.addEventListener('keydown', (e) => {
