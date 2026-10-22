@@ -814,6 +814,8 @@ document.addEventListener('DOMContentLoaded', () => {
     morphClose.addEventListener('click', closeMorph);
     document.addEventListener('keydown', e => {
       if (e.key !== 'Escape') return;
+      const viewer = document.getElementById('lbx');
+      if (viewer && !viewer.hidden) return;      // the viewer takes this one
       if (pjOpen) leaveProject();
       else if (morphed) closeMorph();
     });
@@ -1067,6 +1069,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (pjClose) pjClose.addEventListener('click', leaveProject);
 
+    // Any picture in a case study, the hero included, opens full screen in the
+    // viewer, which then steps through that project's pictures in page order.
+    if (pjBody) pjBody.addEventListener('click', (e) => {
+      const hit = e.target.closest('.pj-hero, .pj-figure img, .pj-figure video');
+      if (!hit || !window.nsLibrary || !pjOpen) return;
+      const name = WS_PROJECTS[pjIndex].name;
+      const media = Array.from(pjBody.querySelectorAll('.pj-hero, .pj-figure img, .pj-figure video'));
+      const items = media.map(el => el.classList.contains('pj-hero')
+        ? { src: (el.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/) || [])[1], kind: 'image', label: name }
+        : { src: el.getAttribute('src'), kind: el.tagName === 'VIDEO' ? 'video' : 'image', poster: el.getAttribute('poster'), label: name });
+      window.nsLibrary.openList(items, media.indexOf(hit), hit);
+    });
+
     /* ---- input ---- */
 
     // The section docks to the middle of the viewport before the wheel is
@@ -1207,7 +1222,12 @@ document.addEventListener('DOMContentLoaded', () => {
       dragging = true;
       suppressClick = false;
       dragX = e.clientX;
-      wsStage.setPointerCapture(e.pointerId);
+    });
+    // Capture only once it is really a drag: capturing on press retargets the
+    // click to the stage, and the card under the pointer never hears it.
+    wsStage.addEventListener('pointermove', (e) => {
+      if (!dragging || wsStage.hasPointerCapture(e.pointerId)) return;
+      if (Math.abs(e.clientX - dragX) > 8) wsStage.setPointerCapture(e.pointerId);
     });
     wsStage.addEventListener('pointerup', (e) => {
       if (!dragging) return;
@@ -1548,7 +1568,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const lbx = document.getElementById('lbx');
   const lbxStage = document.getElementById('lbxStage');
-  let lbxKey = 'visual', lbxIndex = 0, lbxReturn = null;
+  let lbxKey = 'visual', lbxIndex = 0, lbxReturn = null, lbxOverflow = '';
 
   function showLbx(i) {
     const items = LIBRARY[lbxKey];
@@ -1566,6 +1586,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lbxReturn = from || null;
     showLbx(i);
     lbx.hidden = false;
+    lbxOverflow = document.body.style.overflow;   // a case study underneath has its own lock
     document.body.style.overflow = 'hidden';
     document.getElementById('lbxClose').focus();
   }
@@ -1574,7 +1595,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!lbx || lbx.hidden) return;
     lbx.hidden = true;
     lbxStage.innerHTML = '';
-    document.body.style.overflow = '';
+    document.body.style.overflow = lbxOverflow;
     if (lbxReturn) lbxReturn.focus({ preventScroll: true });
   }
 
@@ -1600,7 +1621,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // The works panel (section 6) builds its gallery from this.
-  window.nsLibrary = { items: LIBRARY, open: openLbx };
+  window.nsLibrary = {
+    items: LIBRARY, open: openLbx,
+    // any list of pictures, e.g. one case study's
+    openList(list, i, from) { LIBRARY.__list = list; openLbx('__list', Math.max(0, i), from); }
+  };
 
   console.log('Nirmal Sudish Editorial Portfolio initialized successfully.');
 });
