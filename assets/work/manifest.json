@@ -1,0 +1,1055 @@
+{
+ "projects": [
+  {
+   "slug": "kaapi-district",
+   "client": "Kaapi District",
+   "project": "Brand Identity & Web Design",
+   "role": "Art direction, Design, Web design",
+   "year": "2022",
+   "description": "Kaapi District's branding evokes South India's traditional roasting houses with a vintage wordmark. The carefully designed merchandise, like T-shirts, cups, and coffee bags, captures the brand's essence, telling a story that celebrates the rich heritage of South Indian coffee culture with a blend of tradition and modernity.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/kaapi-district/kaapi_homepage.webp",
+    "w": 1920,
+    "h": 1220,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/kaapi-district/kaapi-district-brand-guidelines.gif",
+     "w": 2500,
+     "h": 966,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/kaapi-district/kaapi-district-website.webp",
+     "w": 1162,
+     "h": 1759,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "northern-escape",
+   "client": "Northern Escape",
+   "project": "UX Case Study",
+   "role": "Art direction, Design, Web design",
+   "year": "2023",
+   "description": "Northern Xscape Rentals is a jet ski and snowmobile rental company based in Ontario. Its specialty focuses on offering power sport equipment rentals. They provide their services in 3 different locations across Ontario.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/northern-escape/northern-escape.webp",
+    "w": 2400,
+    "h": 1826,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/northern-escape/northern-escape1.webp",
+     "w": 2400,
+     "h": 1692,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/northern-escape/northern-escape2.webp",
+     "w": 1681,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/northern-escape/northern-escape3.webp",
+     "w": 1393,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/northern-escape/northern-escape4.webp",
+     "w": 1847,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/northern-escape/northern-escape5.webp",
+     "w": 2400,
+     "h": 2303,
+     "kind": "image"
+    }
+   ],
+   "link": {
+    "href": "https://xd.adobe.com/view/f4577603-d9c1-4f9a-9b50-ffd8f1ceec70-a104/",
+    "label": "View the prototype"
+   }
+  },
+  {
+   "slug": "wisebot",
+   "client": "Wisebot",
+   "project": "AI Chat Interface",
+   "role": "Product Design, UI/UX Case Study",
+   "year": "2023",
+   "description": "WiseBot, an AI-powered help-line app that goes beyond the ordinary. Designed to be your trusty companion, WiseBot brings hope, guidance, and a wealth of valuable resources to those seeking support.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/wisebot/wisebot-main.webp",
+    "w": 1920,
+    "h": 1292,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/wisebot/wisebot2.webp",
+     "w": 1957,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/wisebot/wisebot3.webp",
+     "w": 2239,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/wisebot/wisebot4.webp",
+     "w": 2400,
+     "h": 2337,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/wisebot/wisebot5.webp",
+     "w": 1774,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/wisebot/wisebot6.webp",
+     "w": 2400,
+     "h": 2337,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/wisebot/wisebot7.webp",
+     "w": 1506,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/wisebot/wisebot8.webp",
+     "w": 1894,
+     "h": 2400,
+     "kind": "image"
+    }
+   ],
+   "link": {
+    "href": "https://xd.adobe.com/view/ee3a5e9d-cb06-4df8-849e-a3718a8313e1-bb69/",
+    "label": "View the prototype"
+   }
+  },
+  {
+   "slug": "goldie-bun",
+   "client": "Goldie Bun",
+   "project": "Branding",
+   "role": "Branding, UI/UX",
+   "year": "2025",
+   "description": "Goldie Bun is a boutique burger concept that bridges the gap between fast-casual dining and premium craft quality.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/goldie-bun/goldiebun-main.webp",
+    "w": 2400,
+    "h": 1500,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/goldie-bun/goldiebun-2.webp",
+     "w": 2400,
+     "h": 1601,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/goldie-bun/goldiebun-1.webp",
+     "w": 2400,
+     "h": 1352,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/goldie-bun/goldiebun-3.webp",
+     "w": 1450,
+     "h": 1862,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "icons-of-kerala",
+   "client": "Icons of Kerala",
+   "project": "Digital Art Collection",
+   "role": "Collaboration with Ashley Abraham",
+   "year": "2023",
+   "description": "The concept behind this project was to pay homage to the place from which both of us draw our roots, Kerala.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/icons-of-kerala/iconsofkerala.webp",
+    "w": 1920,
+    "h": 1484,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala1.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala2.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala3.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala4.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala5.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala6.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala7.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala8.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala9.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala10.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala11.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/icons-of-kerala/iconsofkerala12.webp",
+     "w": 2400,
+     "h": 1855,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "magazine-layout",
+   "client": "Magazine Layout",
+   "project": "Magazine Layout & Design",
+   "role": "Editorial Design, Layout",
+   "year": "2024",
+   "description": "A contemporary approach to fashion editorial design focusing on typography and whitespace.",
+   "group": "print",
+   "main": {
+    "src": "assets/work/magazine-layout/magazine-1.webp",
+    "w": 2000,
+    "h": 1500,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/magazine-layout/magazine-main.webp",
+     "w": 2400,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/magazine-layout/magazine-2.webp",
+     "w": 2000,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/magazine-layout/magazine-3.webp",
+     "w": 2000,
+     "h": 1500,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "abu-crispy",
+   "client": "Abu Crispy",
+   "project": "Brand Identity & Documentation",
+   "role": "Graphic Design, Branding",
+   "year": "2025",
+   "description": "Abu Crispy is a Dubai-based food truck serving up crispy, crave-worthy bites with a personality to match. The brief called for a full brand identity that could hold its own on the streets of Dubai and across social media simultaneously.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/abu-crispy/abucrispy1.webp",
+    "w": 2400,
+    "h": 1500,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/abu-crispy/abucrispy2.webp",
+     "w": 2400,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy3.webp",
+     "w": 2400,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy4.webp",
+     "w": 2400,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy5.webp",
+     "w": 2400,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy6.webp",
+     "w": 2400,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy8.webp",
+     "w": 2400,
+     "h": 1500,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy9.webp",
+     "w": 1600,
+     "h": 1200,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/abu-crispy/abucrispy10.webp",
+     "w": 1340,
+     "h": 800,
+     "kind": "image"
+    }
+   ],
+   "link": {
+    "href": "assets/docs/abu-crispy-brand-guidelines.pdf",
+    "label": "Read the brand guidelines"
+   }
+  },
+  {
+   "slug": "novel-cafe",
+   "client": "Novel Cafe",
+   "project": "Brand Identity & Documentation",
+   "role": "Graphic Design, Branding",
+   "year": "2025",
+   "description": "A full brand identity for Novel Cafe, a specialty café based in Sharjah. The direction was warm and refined built around a rich terracotta palette, a custom logo mark, and clean typography that feels both inviting and considered.",
+   "group": "ux",
+   "main": {
+    "src": "assets/work/novel-cafe/novelimg6.webp",
+    "w": 2400,
+    "h": 1350,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/novel-cafe/novelimg1.webp",
+     "w": 1920,
+     "h": 1080,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/novel-cafe/novelimg2.webp",
+     "w": 2400,
+     "h": 1350,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/novel-cafe/novelimg3.webp",
+     "w": 2400,
+     "h": 1350,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/novel-cafe/novelimg4.webp",
+     "w": 1920,
+     "h": 1080,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/novel-cafe/novelimg7.webp",
+     "w": 960,
+     "h": 1080,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "yamanote-cake-box",
+   "client": "Yamanote Cake Box",
+   "project": "Packaging Design",
+   "role": "Graphic Design, Branding",
+   "year": "2025",
+   "description": "A specialty cake box packaging project for Yamanote Atelier, created in collaboration with Chef Nouel Catis. The design combines a vibrant orange and mint palette with fluid, drip-inspired shapes and intricate topographic patterns.",
+   "group": "print",
+   "main": {
+    "src": "assets/work/yamanote-cake-box/cakeboxmain.webp",
+    "w": 1600,
+    "h": 1600,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/yamanote-cake-box/cakebox1.webp",
+     "w": 2400,
+     "h": 2000,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/yamanote-cake-box/cakebox2.webp",
+     "w": 1200,
+     "h": 1600,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/yamanote-cake-box/cakebox3.webp",
+     "w": 1920,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/yamanote-cake-box/cakebox4.webp",
+     "w": 1920,
+     "h": 2400,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "yamanote-sharing-box",
+   "client": "Yamanote Sharing Box",
+   "project": "Packaging Design",
+   "role": "Graphic Design, Branding",
+   "year": "2025",
+   "description": "A packaging design project for Yamanote Atelier's sharing box range. The direction was soft and elegant — warm neutrals, a refined logo mark, and a scalloped seal that adds a handcrafted, artisanal touch.",
+   "group": "print",
+   "main": {
+    "src": "assets/work/yamanote-sharing-box/sharingboxmain.webp",
+    "w": 1920,
+    "h": 2400,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/yamanote-sharing-box/sharingbox1.webp",
+     "w": 1920,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/yamanote-sharing-box/sharingbox2.webp",
+     "w": 1920,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/yamanote-sharing-box/sharingbox3.webp",
+     "w": 1920,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/yamanote-sharing-box/sharingbox4.webp",
+     "w": 1920,
+     "h": 2400,
+     "kind": "image"
+    }
+   ]
+  },
+  {
+   "slug": "osawa-biriyani",
+   "client": "Osawa Biriyani in Dubai",
+   "project": "Brand Identity & Menu Design",
+   "role": "Graphic Design, Branding",
+   "year": "2025",
+   "description": "A branding project for the Dubai pop-up of Biriyani Osawa, the Michelin Bib Gourmand biryani counter by Tokyo-based Chef Takamasa Osawa. The visual identity bridges South Asian culinary heritage with Japanese precision — rich crimson and gold, Japanese calligraphy, and editorial-style menu design that reflects the chef's meticulous craft.",
+   "group": "print",
+   "main": {
+    "src": "assets/work/osawa-biriyani/osawamain.webp",
+    "w": 1600,
+    "h": 1374,
+    "kind": "image"
+   },
+   "gallery": [
+    {
+     "src": "assets/work/osawa-biriyani/osawa3.mp4",
+     "w": 640,
+     "h": 1138,
+     "kind": "video",
+     "poster": "assets/work/osawa-biriyani/osawa3_thumb.webp"
+    },
+    {
+     "src": "assets/work/osawa-biriyani/osawa4.webp",
+     "w": 1697,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/osawa-biriyani/osawa5.webp",
+     "w": 1692,
+     "h": 2400,
+     "kind": "image"
+    },
+    {
+     "src": "assets/work/osawa-biriyani/osawa1.webp",
+     "w": 1692,
+     "h": 2400,
+     "kind": "image"
+    }
+   ]
+  }
+ ],
+ "library": {
+  "visual": [
+   {
+    "src": "assets/library/visual/fourseasonimg1.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg5.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/social_media2.webp",
+    "w": 2000,
+    "h": 1333,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/maison2.webp",
+    "w": 1414,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/bluevelvetimg1.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/streeteryimg2.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/hardeesimg1.webp",
+    "w": 1000,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg8.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/tomoimg1.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/maison1.webp",
+    "w": 1080,
+    "h": 1350,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg1.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/jungleimg1.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg3.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/maison4.webp",
+    "w": 1500,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/studentinv1.webp",
+    "w": 1414,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg9.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg10.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg2.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/maison3.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/tomoimg3.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/ivanaaro--album-art-light.webp",
+    "w": 2000,
+    "h": 1500,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg5.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg6.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/manipulation-work.webp",
+    "w": 2000,
+    "h": 1400,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/hardeesimg2.webp",
+    "w": 2000,
+    "h": 1500,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/matagiimg1.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg10.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg2.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg4.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/jungleimg2.webp",
+    "w": 1080,
+    "h": 1920,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/tomoimg2.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg7.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/streeteryimg3.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg6.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg3.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/fourseasonimg4.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/rafflesimg8.webp",
+    "w": 1125,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/packaging1.webp",
+    "w": 2000,
+    "h": 1500,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/visual/packaging2.webp",
+    "w": 2000,
+    "h": 1500,
+    "kind": "image"
+   }
+  ],
+  "3d": [
+   {
+    "src": "assets/library/3d/3d-1.webp",
+    "w": 2000,
+    "h": 1116,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/3d/3d-2.webp",
+    "w": 1800,
+    "h": 1800,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/3d/3d-3.webp",
+    "w": 1600,
+    "h": 2000,
+    "kind": "image"
+   }
+  ],
+  "experimental": [
+   {
+    "src": "assets/library/experimental/photomanip1.webp",
+    "w": 2000,
+    "h": 1600,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/experimental/photomanip2.webp",
+    "w": 1333,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/experimental/photomanip3.webp",
+    "w": 2000,
+    "h": 1333,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/experimental/photomanip4.webp",
+    "w": 2000,
+    "h": 1333,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/experimental/photomanip6.webp",
+    "w": 1773,
+    "h": 2000,
+    "kind": "image"
+   },
+   {
+    "src": "assets/library/experimental/photomanip7.webp",
+    "w": 1251,
+    "h": 2000,
+    "kind": "image"
+   }
+  ],
+  "motion": [
+   {
+    "src": "assets/library/motion/spaces1.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/spaces1_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/spaces2.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/spaces2_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/raffles4.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/raffles4_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/raffles5.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/raffles5_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/raffles6.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/raffles6_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/raffles7.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/raffles7_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/hardees1.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/hardees1_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/hardees2.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/hardees2_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/crossing1.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/crossing1_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/crossing2.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/crossing2_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/crossing3.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/crossing3_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/fourseason2.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/fourseason2_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/fourseason3.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/fourseason3_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/motiondesignvid_2.mp4",
+    "w": 1080,
+    "h": 720,
+    "kind": "video",
+    "poster": "assets/library/motion/motiondesignvid_2_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/a5_motiondesign_nirmalsudish.mp4",
+    "w": 1600,
+    "h": 900,
+    "kind": "video",
+    "poster": "assets/library/motion/a5_motiondesign_nirmalsudish_thumb.webp"
+   },
+   {
+    "src": "assets/library/motion/animatedposter_nirmalsudish.mp4",
+    "w": 900,
+    "h": 1600,
+    "kind": "video",
+    "poster": "assets/library/motion/animatedposter_nirmalsudish_thumb.webp"
+   }
+  ]
+ },
+ "clients": [
+  {
+   "src": "assets/clients/yamanote-atelier.png",
+   "w": 142,
+   "h": 112,
+   "name": "Yamanote Atelier"
+  },
+  {
+   "src": "assets/clients/four-seasons.png",
+   "w": 168,
+   "h": 112,
+   "name": "Four Seasons"
+  },
+  {
+   "src": "assets/clients/hardee-s.png",
+   "w": 387,
+   "h": 112,
+   "name": "Hardee's"
+  },
+  {
+   "src": "assets/clients/orfali-bros.png",
+   "w": 328,
+   "h": 112,
+   "name": "Orfali Bros"
+  },
+  {
+   "src": "assets/clients/penrose-lounge.png",
+   "w": 293,
+   "h": 112,
+   "name": "Penrose Lounge"
+  },
+  {
+   "src": "assets/clients/luna.png",
+   "w": 112,
+   "h": 112,
+   "name": "Luna"
+  },
+  {
+   "src": "assets/clients/matagi.png",
+   "w": 300,
+   "h": 112,
+   "name": "Matagi"
+  },
+  {
+   "src": "assets/clients/mercury-rooftop.png",
+   "w": 618,
+   "h": 112,
+   "name": "Mercury Rooftop"
+  },
+  {
+   "src": "assets/clients/mina-brasserie.png",
+   "w": 225,
+   "h": 112,
+   "name": "Mina Brasserie"
+  },
+  {
+   "src": "assets/clients/sola-jazz-lounge.png",
+   "w": 104,
+   "h": 112,
+   "name": "Sola Jazz Lounge"
+  },
+  {
+   "src": "assets/clients/spaces.png",
+   "w": 387,
+   "h": 112,
+   "name": "Spaces"
+  },
+  {
+   "src": "assets/clients/tomo.png",
+   "w": 118,
+   "h": 112,
+   "name": "Tomo"
+  },
+  {
+   "src": "assets/clients/seafu.png",
+   "w": 506,
+   "h": 112,
+   "name": "Seafu"
+  },
+  {
+   "src": "assets/clients/raffles-the-palm.png",
+   "w": 151,
+   "h": 112,
+   "name": "Raffles The Palm"
+  },
+  {
+   "src": "assets/clients/piatti-by-the-beach.png",
+   "w": 175,
+   "h": 112,
+   "name": "Piatti by the Beach"
+  }
+ ],
+ "roles": {
+  "yamanote": {
+   "src": "assets/clients/yamanote-card.png",
+   "w": 406,
+   "h": 320
+  }
+ }
+}

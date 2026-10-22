@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery Effects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --brown: #3e2f1c; --yellow: #FFD177; --deep: #2f2414; --line: rgba(255, 209, 119, 0.22); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--brown); color: var(--yellow); font-family: "Plus Jakarta Sans", sans-serif; }
+  img { display: block; }
+  .intro { padding: 120px 60px 60px; }
+  .intro h1 { margin: 0; font-family: Anton, sans-serif; font-weight: 400; font-size: clamp(64px, 11vw, 200px); line-height: 0.85; text-transform: uppercase; }
+  .intro p { max-width: 52ch; font-size: 17px; line-height: 1.6; opacity: 0.8; }
+  .index { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .index a { padding: 10px 18px; border: 1.5px solid var(--line); border-radius: 30px; color: var(--yellow); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .index a:hover { background: var(--yellow); color: var(--brown); }
+
+  .fx { position: relative; border-top: 1.5px solid var(--line); padding: 80px 60px; }
+  .fx-head { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-bottom: 44px; flex-wrap: wrap; }
+  .fx-num { font-size: 13px; font-weight: 800; letter-spacing: 0.14em; opacity: 0.6; }
+  .fx-head h2 { margin: 6px 0 0; font-family: Anton, sans-serif; font-weight: 400; font-size: clamp(44px, 6vw, 96px); line-height: 0.9; text-transform: uppercase; }
+  .fx-head p { max-width: 44ch; margin: 0; font-size: 15px; line-height: 1.55; opacity: 0.75; }
+  .fx-seen { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; margin-top: 10px; }
+  .btn { padding: 12px 20px; border: 0; border-radius: 14px; background: var(--yellow); color: var(--brown); font: 800 13px "Plus Jakarta Sans"; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+
+  /* 01 */
+  .g1 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .g1 figure { margin: 0; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 16px; clip-path: inset(100% 0 0 0 round 16px); }
+  .g1 img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* 02 */
+  .g2 { overflow: hidden; padding: 0; margin: 0 -60px; }
+  .g2-row { overflow: hidden; padding: 10px 0; }
+  .g2-track { display: flex; gap: 16px; width: max-content; will-change: transform; }
+  .g2-track img { width: 280px; height: 360px; object-fit: cover; border-radius: 16px; }
+
+  /* 03 */
+  .g3 { position: relative; }
+  .g3-item { display: flex; justify-content: space-between; align-items: baseline; padding: 22px 0 16px; border-bottom: 1.5px solid var(--line); font-family: Anton, sans-serif; font-size: clamp(40px, 6vw, 96px); line-height: 0.95; text-transform: uppercase; cursor: pointer; transition: opacity 0.3s; }
+  .g3-item span { font: 600 14px "Plus Jakarta Sans"; opacity: 0.6; text-transform: none; }
+  .g3:hover .g3-item { opacity: 0.35; }
+  .g3 .g3-item:hover { opacity: 1; }
+  .g3-float { position: fixed; left: 0; top: 0; width: 300px; height: 380px; margin: -190px 0 0 -150px; border-radius: 16px; overflow: hidden; pointer-events: none; z-index: 30; opacity: 0; transform: scale(0.6); }
+  .g3-float img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* 04 */
+  .g4 { height: 150vh; overflow: hidden; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 -60px; padding: 0 16px; }
+  .g4-col { display: flex; flex-direction: column; gap: 16px; will-change: transform; }
+  .g4-col img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 16px; }
+
+  /* 05 */
+  .g5 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .g5 img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 14px; cursor: zoom-in; }
+  .g5-scrim { position: fixed; inset: 0; background: rgba(20, 14, 6, 0.92); z-index: 40; opacity: 0; pointer-events: none; }
+  .g5-big { position: fixed; z-index: 41; object-fit: cover; cursor: zoom-out; }
+
+  /* 06 */
+  .g6 { height: 640px; perspective: 2200px; display: grid; place-items: center; cursor: grab; touch-action: pan-y; overflow: hidden; margin: 0 -60px; }
+  .g6:active { cursor: grabbing; }
+  .g6-ring { position: relative; width: 220px; height: 300px; transform-style: preserve-3d; }
+  .g6-ring img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 14px; backface-visibility: hidden; user-select: none; -webkit-user-drag: none; }
+
+  /* 07 */
+  .g7 { position: relative; height: 100vh; overflow: hidden; margin: 0 -60px; cursor: grab; touch-action: none; }
+  .g7:active { cursor: grabbing; }
+  .g7 img { position: absolute; left: 0; top: 0; width: 260px; height: 340px; object-fit: cover; border-radius: 14px; user-select: none; -webkit-user-drag: none; }
+  .g7-hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 2; padding: 10px 18px; border-radius: 30px; background: var(--yellow); color: var(--brown); font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; pointer-events: none; }
+
+  /* 08 */
+  .g8 { position: relative; height: 560px; display: grid; place-items: center; }
+  .g8-card { position: absolute; width: 320px; height: 440px; border-radius: 18px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35); cursor: pointer; }
+  .g8-card img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* 09 */
+  .g9 { position: relative; height: 78vh; border-radius: 18px; overflow: hidden; cursor: pointer; background: var(--deep); }
+  .g9 > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .g9-strip { position: absolute; top: 0; height: 100%; overflow: hidden; }
+  .g9-strip img { position: absolute; top: 0; height: 100%; object-fit: cover; max-width: none; }
+  .g9-count { position: absolute; left: 24px; bottom: 20px; z-index: 5; font: 800 13px "Plus Jakarta Sans"; letter-spacing: 0.14em; color: #fff; mix-blend-mode: difference; }
+
+  /* 10 */
+  .g10 { height: 300vh; position: relative; margin: 0 -60px; }
+  .g10-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; }
+  .g10-track { display: flex; gap: 28px; padding: 0 60px; will-change: transform; }
+  .g10-track figure { margin: 0; flex: 0 0 auto; width: 34vw; height: 70vh; border-radius: 18px; overflow: hidden; }
+  .g10-track img { width: 120%; height: 100%; object-fit: cover; margin-left: -10%; }
+
+  @media (max-width: 760px) {
+    .intro, .fx { padding-left: 20px; padding-right: 20px; }
+    .g1 { grid-template-columns: repeat(2, 1fr); }
+    .g2, .g4, .g6, .g7, .g10 { margin: 0 -20px; }
+    .g2-track img { width: 180px; height: 240px; }
+    .g4 { grid-template-columns: repeat(2, 1fr); }
+    .g4-col:nth-child(n+3) { display: none; }
+    .g5 { grid-template-columns: repeat(3, 1fr); }
+    .g8-card { width: 240px; height: 330px; }
+    .g10-track figure { width: 72vw; }
+    .g3-float { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <h1>Gallery effects</h1>
+  <p>Ten ways to show the work, all built with GSAP and your own images. Scroll, hover, drag and click each one. Tell me the number you like and I'll build it into the site.</p>
+  <nav class="index">
+    <a href="#fx1">01 Clip reveal</a><a href="#fx2">02 Velocity marquee</a><a href="#fx3">03 Hover list</a>
+    <a href="#fx4">04 Parallax columns</a><a href="#fx5">05 Expand to full</a><a href="#fx6">06 3D ring</a>
+    <a href="#fx7">07 Drag canvas</a><a href="#fx8">08 Card shuffle</a><a href="#fx9">09 Slice slideshow</a>
+    <a href="#fx10">10 Horizontal scroll</a>
+  </nav>
+</header>
+
+<section class="fx" id="fx1">
+  <div class="fx-head"><div><div class="fx-num">01</div><h2>Clip reveal</h2><div class="fx-seen">Scroll into view</div></div>
+    <p>Each picture wipes up out of its frame while the image inside settles from a zoom. Cascades in a stagger. <button class="btn" id="g1Replay">Replay</button></p></div>
+  <div class="g1" id="g1"></div>
+</section>
+
+<section class="fx" id="fx2">
+  <div class="fx-head"><div><div class="fx-num">02</div><h2>Velocity marquee</h2><div class="fx-seen">Scroll fast</div></div>
+    <p>Two endless rows drifting in opposite directions. Scrolling speeds them up and leans the pictures with the motion.</p></div>
+  <div class="g2" id="g2"><div class="g2-row"><div class="g2-track"></div></div><div class="g2-row"><div class="g2-track"></div></div></div>
+</section>
+
+<section class="fx" id="fx3">
+  <div class="fx-head"><div><div class="fx-num">03</div><h2>Hover list</h2><div class="fx-seen">Move the mouse over the names</div></div>
+    <p>A plain typographic index. The picture follows the cursor, swaps per row and tilts with the speed of the pointer.</p></div>
+  <div class="g3" id="g3"></div>
+  <div class="g3-float" id="g3Float"><img alt=""></div>
+</section>
+
+<section class="fx" id="fx4">
+  <div class="fx-head"><div><div class="fx-num">04</div><h2>Parallax columns</h2><div class="fx-seen">Scroll slowly</div></div>
+    <p>Four columns travelling at different speeds as you scroll, alternating up and down.</p></div>
+  <div class="g4" id="g4"></div>
+</section>
+
+<section class="fx" id="fx5">
+  <div class="fx-head"><div><div class="fx-num">05</div><h2>Expand to full</h2><div class="fx-seen">Click a picture</div></div>
+    <p>The thumbnail itself grows out of the grid into a full view, then flies back into its slot.</p></div>
+  <div class="g5" id="g5"></div>
+</section>
+
+<section class="fx" id="fx6">
+  <div class="fx-head"><div><div class="fx-num">06</div><h2>3D ring</h2><div class="fx-seen">Drag sideways</div></div>
+    <p>The pictures stand in a turning cylinder. Drag to spin it; it coasts and settles back to a slow turn.</p></div>
+  <div class="g6" id="g6"><div class="g6-ring"></div></div>
+</section>
+
+<section class="fx" id="fx7">
+  <div class="fx-head"><div><div class="fx-num">07</div><h2>Drag canvas</h2><div class="fx-seen">Click and drag in any direction</div></div>
+    <p>An endless wall you pan around freely, with inertia. The wall shrinks back slightly while you hold it.</p></div>
+  <div class="g7" id="g7"><div class="g7-hint">Drag to explore</div></div>
+</section>
+
+<section class="fx" id="fx8">
+  <div class="fx-head"><div><div class="fx-num">08</div><h2>Card shuffle</h2><div class="fx-seen">Plays by itself, or click the deck</div></div>
+    <p>A deck of pieces. The top card throws off to the side and tucks in at the back.</p></div>
+  <div class="g8" id="g8"></div>
+</section>
+
+<section class="fx" id="fx9">
+  <div class="fx-head"><div><div class="fx-num">09</div><h2>Slice slideshow</h2><div class="fx-seen">Plays by itself, or click</div></div>
+    <p>The next picture arrives in vertical strips, alternating from top and bottom.</p></div>
+  <div class="g9" id="g9"><img alt=""><div class="g9-count" id="g9Count"></div></div>
+</section>
+
+<section class="fx" id="fx10" style="padding-bottom:0">
+  <div class="fx-head"><div><div class="fx-num">10</div><h2>Horizontal scroll</h2><div class="fx-seen">Keep scrolling down</div></div>
+    <p>The page pins and the gallery slides sideways as you scroll; each picture drifts inside its frame.</p></div>
+  <div class="g10" id="g10"><div class="g10-pin"><div class="g10-track"></div></div></div>
+</section>
+
+<div class="g5-scrim" id="g5Scrim"></div>
+
+<script src="vendor/gsap.min.js"></script>
+<script>
+(() => {
+  const V = n => `assets/library/visual/${n}.webp`;
+  const IMGS = ['fourseasonimg1','rafflesimg5','tomoimg1','maison2','bluevelvetimg1','streeteryimg2','hardeesimg1','jungleimg1',
+    'fourseasonimg8','maison1','rafflesimg1','fourseasonimg3','maison4','studentinv1','rafflesimg9','tomoimg3','matagiimg1',
+    'fourseasonimg10','rafflesimg2','maison3','jungleimg2','tomoimg2','streeteryimg3','rafflesimg7'].map(V);
+  const NAMES = [['Four Seasons','Key visuals'],['Raffles The Palm','Spa & wellness'],['Tomo','Restaurant'],['Maison','Matcha bar'],
+    ['Blue Velvet','Nightlife'],['Streetery','Street food'],["Hardee's",'Campaign'],['Jungle','Tacos']];
+  const img = (src, cls = '') => `<img src="${src}" alt="" loading="lazy" decoding="async"${cls ? ` class="${cls}"` : ''}>`;
+  const $ = id => document.getElementById(id);
+  const wrap = gsap.utils.wrap, clamp = gsap.utils.clamp;
+  const onView = (el, fn, once = true) => new IntersectionObserver((es, o) => es.forEach(e => {
+    if (e.isIntersecting) { fn(); if (once) o.disconnect(); }
+  }), { threshold: 0.25 }).observe(el);
+
+  /* 01 clip reveal */
+  const g1 = $('g1');
+  g1.innerHTML = IMGS.slice(0, 8).map(s => `<figure>${img(s)}</figure>`).join('');
+  const reveal = () => {
+    const figs = g1.querySelectorAll('figure');
+    gsap.timeline()
+      .fromTo(figs, { clipPath: 'inset(100% 0% 0% 0% round 16px)' }, { clipPath: 'inset(0% 0% 0% 0% round 16px)', duration: 1.2, ease: 'expo.inOut', stagger: 0.08 }, 0)
+      .fromTo(g1.querySelectorAll('img'), { scale: 1.5 }, { scale: 1, duration: 1.6, ease: 'expo.out', stagger: 0.08 }, 0.2);
+  };
+  onView(g1, reveal);
+  $('g1Replay').addEventListener('click', reveal);
+
+  /* 02 velocity marquee */
+  const rows = [...document.querySelectorAll('.g2-track')];
+  let vel = 0, lastY = scrollY;
+  addEventListener('scroll', () => { vel += (scrollY - lastY) * 0.6; lastY = scrollY; }, { passive: true });
+  const rowState = rows.map((t, i) => {
+    const set = (i ? IMGS.slice(12, 22) : IMGS.slice(0, 10)).map(s => img(s)).join('');
+    t.innerHTML = set + set;
+    return { t, x: 0, dir: i ? 1 : -1, skew: gsap.quickTo(t, 'skewX', { duration: 0.5, ease: 'power3' }) };
+  });
+  gsap.ticker.add((time, dt) => {
+    vel *= 0.92;
+    rowState.forEach(r => {
+      const half = r.t.scrollWidth / 2;
+      if (!half) return;
+      r.x = wrap(-half, 0, r.x + (r.dir * 0.06 * dt) + r.dir * vel * 0.25);
+      gsap.set(r.t, { x: r.x });
+      r.skew(clamp(-14, 14, vel * -0.35 * r.dir));
+    });
+  });
+
+  /* 03 hover list */
+  const g3 = $('g3'), float = $('g3Float'), fimg = float.querySelector('img');
+  g3.innerHTML = NAMES.map(([n, t], i) => `<div class="g3-item" data-src="${IMGS[i]}">${n}<span>${t}</span></div>`).join('');
+  const fx = gsap.quickTo(float, 'x', { duration: 0.6, ease: 'power3' }), fy = gsap.quickTo(float, 'y', { duration: 0.6, ease: 'power3' });
+  const frot = gsap.quickTo(float, 'rotation', { duration: 0.8, ease: 'power3' });
+  let px = 0;
+  addEventListener('mousemove', e => { fx(e.clientX); fy(e.clientY); frot(clamp(-14, 14, (e.clientX - px) * 0.6)); px = e.clientX; });
+  g3.querySelectorAll('.g3-item').forEach(it => it.addEventListener('mouseenter', () => {
+    fimg.src = it.dataset.src;
+    gsap.fromTo(fimg, { scale: 1.3 }, { scale: 1, duration: 0.6, ease: 'power3.out' });
+    gsap.to(float, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'power3.out' });
+  }));
+  g3.addEventListener('mouseleave', () => gsap.to(float, { autoAlpha: 0, scale: 0.6, duration: 0.35, ease: 'power3.in' }));
+
+  /* 04 parallax columns */
+  const g4 = $('g4');
+  g4.innerHTML = [0, 1, 2, 3].map(c => `<div class="g4-col">${IMGS.slice(c * 6, c * 6 + 6).map(s => img(s)).join('')}</div>`).join('');
+  const cols = [...g4.children], SPEEDS = [-300, 220, -420, 160];
+  const colTo = cols.map(c => gsap.quickTo(c, 'y', { duration: 0.9, ease: 'power3' }));
+  const para = () => {
+    const r = g4.getBoundingClientRect();
+    const p = clamp(0, 1, (innerHeight - r.top) / (innerHeight + r.height));
+    colTo.forEach((to, i) => to((p - 0.5) * SPEEDS[i] * 2 - (SPEEDS[i] < 0 ? 0 : 200)));
+  };
+  addEventListener('scroll', para, { passive: true }); para();
+
+  /* 05 expand to full */
+  const g5 = $('g5'), scrim = $('g5Scrim');
+  g5.innerHTML = IMGS.slice(4, 16).map(s => img(s)).join('');
+  let big = null;
+  g5.addEventListener('click', e => {
+    const t = e.target.closest('img'); if (!t || big) return;
+    const r = t.getBoundingClientRect();
+    const ratio = (t.naturalWidth || 9) / (t.naturalHeight || 16);
+    const H = Math.min(innerHeight * 0.88, innerWidth * 0.9 / ratio), W = H * ratio;
+    big = document.createElement('img'); big.src = t.src; big.className = 'g5-big';
+    Object.assign(big.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', borderRadius: '14px' });
+    document.body.appendChild(big); t.style.visibility = 'hidden';
+    gsap.to(scrim, { opacity: 1, duration: 0.5, pointerEvents: 'auto' });
+    gsap.to(big, { left: (innerWidth - W) / 2, top: (innerHeight - H) / 2, width: W, height: H, borderRadius: 6, duration: 0.9, ease: 'expo.inOut' });
+    const close = () => {
+      const r2 = t.getBoundingClientRect();
+      gsap.to(scrim, { opacity: 0, duration: 0.5, pointerEvents: 'none' });
+      gsap.to(big, { left: r2.left, top: r2.top, width: r2.width, height: r2.height, borderRadius: 14, duration: 0.8, ease: 'expo.inOut',
+        onComplete() { t.style.visibility = ''; big.remove(); big = null; } });
+      scrim.removeEventListener('click', close);
+    };
+    big.addEventListener('click', close); scrim.addEventListener('click', close);
+  });
+
+  /* 06 3D ring */
+  const g6 = $('g6'), ring = g6.querySelector('.g6-ring');
+  const N = 14, step = 360 / N, R = Math.round(110 / Math.tan(Math.PI / N) * 1.12);
+  ring.innerHTML = IMGS.slice(0, N).map(s => img(s)).join('');
+  [...ring.children].forEach((el, i) => { el.style.transform = `rotateY(${i * step}deg) translateZ(${R}px)`; });
+  let rot = 0, rv = 0, tilt = 0, drag6 = null;
+  g6.addEventListener('pointerdown', e => { drag6 = e.clientX; g6.setPointerCapture(e.pointerId); });
+  g6.addEventListener('pointermove', e => {
+    tilt = ((e.clientY - g6.getBoundingClientRect().top) / g6.clientHeight - 0.5) * -12;
+    if (drag6 === null) return; rv = (e.clientX - drag6) * 0.25; drag6 = e.clientX;
+  });
+  g6.addEventListener('pointerup', () => { drag6 = null; });
+  let tiltNow = 0;
+  gsap.ticker.add(() => {
+    if (drag6 === null) rv += (-0.12 - rv) * 0.03;
+    rot += rv; tiltNow += (tilt - tiltNow) * 0.08;
+    ring.style.transform = `rotateX(${tiltNow}deg) rotateY(${rot}deg)`;
+  });
+
+  /* 07 drag canvas */
+  const g7 = $('g7'), TW = 260, TH = 340, GAP = 28, C = 8, Rw = 4;
+  const cw = TW + GAP, ch = TH + GAP, totalW = C * cw, totalH = Rw * ch;
+  const tiles = [];
+  for (let r = 0; r < Rw; r++) for (let c = 0; c < C; c++) {
+    g7.insertAdjacentHTML('beforeend', img(IMGS[(r * C + c) % IMGS.length]));
+    tiles.push({ el: g7.lastElementChild, bx: c * cw + (r % 2 ? cw / 2 : 0), by: r * ch });
+  }
+  let ox = 0, oy = 0, tx = 0, ty = 0, d7 = null;
+  g7.addEventListener('pointerdown', e => { d7 = [e.clientX, e.clientY]; g7.setPointerCapture(e.pointerId); gsap.to(tiles.map(t => t.el), { scale: 0.92, duration: 0.5, ease: 'power3' }); });
+  g7.addEventListener('pointermove', e => { if (!d7) return; tx += (e.clientX - d7[0]) * 1.6; ty += (e.clientY - d7[1]) * 1.6; d7 = [e.clientX, e.clientY]; });
+  const up7 = () => { if (!d7) return; d7 = null; gsap.to(tiles.map(t => t.el), { scale: 1, duration: 0.7, ease: 'power3' }); };
+  g7.addEventListener('pointerup', up7); g7.addEventListener('pointercancel', up7);
+  gsap.ticker.add(() => {
+    if (!d7) { tx -= 0.25; }
+    ox += (tx - ox) * 0.08; oy += (ty - oy) * 0.08;
+    tiles.forEach(t => gsap.set(t.el, { x: wrap(-cw, totalW - cw, t.bx + ox), y: wrap(-ch, totalH - ch, t.by + oy) }));
+  });
+
+  /* 08 card shuffle */
+  const g8 = $('g8');
+  g8.innerHTML = IMGS.slice(8, 14).map(s => `<div class="g8-card">${img(s)}</div>`).join('');
+  let deck = [...g8.children].reverse();
+  const layout = (d = 0.6) => deck.forEach((c, i) => gsap.to(c, { y: i * -18, scale: 1 - i * 0.05, rotation: i % 2 ? 2 : -2, zIndex: 50 - i, duration: d, ease: 'power3.out' }));
+  layout(0);
+  let busy = false;
+  const shuffle = () => {
+    if (busy) return; busy = true;
+    const top = deck[0];
+    gsap.timeline({ onComplete() { busy = false; } })
+      .to(top, { x: innerWidth < 760 ? 220 : 380, rotation: 18, duration: 0.5, ease: 'power3.in' })
+      .add(() => { deck = [...deck.slice(1), top]; gsap.set(top, { zIndex: 0 }); layout(); })
+      .to(top, { x: 0, duration: 0.6, ease: 'power3.out' });
+  };
+  g8.addEventListener('click', shuffle);
+  onView(g8, () => setInterval(() => { if (!document.hidden) shuffle(); }, 2600));
+
+  /* 09 slice slideshow */
+  const g9 = $('g9'), base = g9.querySelector('img'), count = $('g9Count'), SL = IMGS.slice(14, 22), STRIPS = 6;
+  let at = 0, sliding = false;
+  base.src = SL[0]; count.textContent = `01 / ${String(SL.length).padStart(2, '0')}`;
+  const next = () => {
+    if (sliding) return; sliding = true;
+    at = (at + 1) % SL.length;
+    const W = g9.clientWidth, sw = W / STRIPS, strips = [];
+    for (let i = 0; i < STRIPS; i++) {
+      const s = document.createElement('div'); s.className = 'g9-strip';
+      s.style.left = i * sw + 'px'; s.style.width = Math.ceil(sw) + 1 + 'px';
+      s.innerHTML = `<img src="${SL[at]}" alt="" style="width:${W}px;left:${-i * sw}px">`;
+      g9.appendChild(s); strips.push(s);
+    }
+    gsap.timeline({ onComplete() { base.src = SL[at]; strips.forEach(s => s.remove()); sliding = false; } })
+      .fromTo(strips, { yPercent: i => (i % 2 ? -100 : 100) }, { yPercent: 0, duration: 1, ease: 'expo.inOut', stagger: 0.06 })
+      .fromTo(strips.map(s => s.firstChild), { scale: 1.3 }, { scale: 1, duration: 1.4, ease: 'expo.out', stagger: 0.06 }, 0.2)
+      .add(() => { count.textContent = `${String(at + 1).padStart(2, '0')} / ${String(SL.length).padStart(2, '0')}`; }, 0.5);
+  };
+  g9.addEventListener('click', next);
+  onView(g9, () => setInterval(() => { if (!document.hidden) next(); }, 3400));
+
+  /* 10 horizontal scroll */
+  const g10 = $('g10'), track = g10.querySelector('.g10-track');
+  track.innerHTML = IMGS.slice(0, 9).map(s => `<figure>${img(s)}</figure>`).join('');
+  const hx = gsap.quickTo(track, 'x', { duration: 0.6, ease: 'power3' });
+  const inner = [...track.querySelectorAll('img')].map(i => gsap.quickTo(i, 'xPercent', { duration: 0.6, ease: 'power3' }));
+  const horiz = () => {
+    const r = g10.getBoundingClientRect();
+    const p = clamp(0, 1, -r.top / (r.height - innerHeight));
+    hx(-(track.scrollWidth - innerWidth) * p);
+    inner.forEach((to, i) => to((p * 9 - i) * -4));
+  };
+  addEventListener('scroll', horiz, { passive: true }); addEventListener('resize', horiz); horiz();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid · Nirmal Sudish</title>
+  <meta name="description" content="Visual design, motion, 3D and experimental work by Nirmal Sudish, a multi-disciplinary designer in Dubai, UAE.">
+  <link rel="icon" href="assets/brand/nirmal-plate.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat:wght@500;600;700&family=Ruthie&family=Allura&family=Space+Mono&family=Oswald:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2026102114051">
+  <link rel="stylesheet" href="grid.css?v=202610221800">
+
+  <!-- ==========================================================================
+       LOGO NAVIGATION MORPH
+       Scoped to this file on purpose: it is an overlay, so it adds nothing to
+       the page's own layout and touches no existing rule except hiding the
+       trigger while the panel stands in its place.
+
+       The panel's resting CSS geometry IS the open state. JS seeds the closed
+       state as inline styles taken from the logo's live rect, then clears them
+       so the panel transitions out of the logo's own box rather than fading in.
+       ========================================================================== -->
+  <style>
+    #navMorph {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #navMorph.is-armed { visibility: visible; }
+
+    /* The viewport ground going dark is what lets a pale panel read at all. */
+    .navmorph-scrim {
+      position: absolute;
+      inset: 0;
+      background-color: #14100c;
+      opacity: 0;
+      transition: opacity 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    #navMorph.is-open .navmorph-scrim { opacity: 1; pointer-events: auto; }
+
+    .navmorph-panel {
+      position: absolute;
+      left: 16px;
+      top: 11px;
+      width: min(784px, calc(100vw - 32px));
+      height: 120px;
+      border-radius: 17px;
+      background-color: #FFD177;
+      overflow: hidden;
+      pointer-events: auto;
+      transition:
+        left 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        top 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        width 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        height 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        border-radius 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .navmorph-links {
+      position: absolute;
+      left: 74px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 96px;
+      white-space: nowrap;
+      opacity: 0;
+      /* Closing: the text goes first, before the box starts contracting. */
+      transition: opacity 120ms linear;
+    }
+
+    /* Opening: held back until the box has actually started opening out. */
+    #navMorph.is-open .navmorph-links {
+      opacity: 1;
+      transition: opacity 240ms linear 150ms;
+    }
+
+    .navmorph-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #101010;
+      text-decoration: none;
+    }
+
+    .navmorph-tri {
+      font-size: 12px;
+      line-height: 1;
+      color: #101010;
+    }
+
+    /* The mark is the existing logo's own artwork used as a mask, so it takes
+       the panel's black without a second copy of the file being drawn. */
+    .navmorph-mark {
+      position: absolute;
+      top: 50%;
+      right: 28px;
+      width: 56px;
+      height: 56px;
+      transform: translateY(-50%);
+      background-color: #101010;
+      -webkit-mask: url("assets/brand/nirmal-mark.svg") center / contain no-repeat;
+      mask: url("assets/brand/nirmal-mark.svg") center / contain no-repeat;
+      transition:
+        right 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        width 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        height 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    /* The trigger steps aside while the panel occupies its box. */
+    body.nav-open .hero-logo { opacity: 0; }
+
+    @media (max-width: 820px) {
+      .navmorph-panel { height: 92px; border-radius: 14px; }
+      .navmorph-links { left: 40px; gap: 40px; }
+      .navmorph-link { font-size: 15px; }
+      .navmorph-mark { right: 18px; width: 42px; height: 42px; }
+    }
+
+    /* Phones: four links in one row would run under the mark, so they stack
+       as large, thumb-sized rows down the panel, the mark at its right. */
+    @media (max-width: 600px) {
+      .navmorph-panel { left: 12px; top: 10px; width: calc(100vw - 24px); height: 252px; border-radius: 16px; }
+      .navmorph-links { left: 26px; flex-direction: column; align-items: flex-start; gap: 0; }
+      .navmorph-link { font-size: 21px; padding: 12px 0; }
+      .navmorph-tri { font-size: 13px; }
+      .navmorph-mark { right: 26px; width: 46px; height: 46px; }
+    }
+
+    /* Touch tablets keep the row, but each link gets a thumb-sized hit area;
+       the row is centred, so it reads exactly the same. */
+    @media (hover: none) and (pointer: coarse) and (min-width: 601px) {
+      .navmorph-link { padding-block: 10px; }
+    }
+  </style>
+</head>
+<body class="grid-page">
+
+  <!-- The mark that opens the navigation, where the homepage keeps it. -->
+  <div class="hero-logo-wrap grid-logo" id="navTrigger">
+    <a href="index.html" class="hero-logo" aria-label="Nirmal Sudish — home">
+      <img src="assets/brand/nirmal-plate.svg" alt="" width="64" height="64">
+    </a>
+  </div>
+
+  <a class="grid-close" id="gridClose" href="index.html#works-stack" aria-label="Close and go back to the work">
+    Close<span aria-hidden="true">&#x2715;</span>
+  </a>
+
+  <main>
+    <header class="grid-head">
+      <h1 class="grid-title">Grid</h1>
+      <p class="grid-intro">Everything that lives outside the case studies: key visuals, social
+        content, motion, 3D and experiments, much of it for hotels, restaurants and brands
+        across Dubai.</p>
+    </header>
+
+    <div class="grid-tabs" role="tablist" aria-label="Filter the grid">
+      <button class="grid-tab is-active" role="tab" aria-selected="true" data-cat="all">All<span>64</span></button>
+      <button class="grid-tab" role="tab" aria-selected="false" data-cat="visual">Visual design<span>39</span></button>
+      <button class="grid-tab" role="tab" aria-selected="false" data-cat="motion">Motion<span>16</span></button>
+      <button class="grid-tab" role="tab" aria-selected="false" data-cat="3d">3D<span>3</span></button>
+      <button class="grid-tab" role="tab" aria-selected="false" data-cat="experimental">Experimental<span>6</span></button>
+    </div>
+
+    <div class="grid-brands" id="gridBrands" aria-label="Filter by brand"></div>
+
+    <section class="grid-wall" id="gridWall" aria-label="Work">
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="0" aria-label="Open Four Seasons: Ladies Night poster, every Wednesday"><img src="assets/library/visual/fourseasonimg1.webp" alt="Four Seasons: Ladies Night poster, every Wednesday" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Ladies Night poster, every Wednesday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="0" aria-label="Open Spaces: Café menu reel for Spaces"><video src="assets/library/motion/spaces1.mp4" poster="assets/library/motion/spaces1_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Spaces</h2><p class="gcard-desc">Café menu reel for Spaces</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="1" aria-label="Open Raffles The Palm: Winds of the Himalayas: an Ayurvedic massage offer"><img src="assets/library/visual/rafflesimg5.webp" alt="Raffles The Palm: Winds of the Himalayas: an Ayurvedic massage offer" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Winds of the Himalayas: an Ayurvedic massage offer</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="2" aria-label="Open Social media: Game-day social posts, on an Instagram mock-up"><img src="assets/library/visual/social_media2.webp" alt="Social media: Game-day social posts, on an Instagram mock-up" loading="lazy" decoding="async" width="2000" height="1333"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Social media</h2><p class="gcard-desc">Game-day social posts, on an Instagram mock-up</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="experimental">
+        <button class="gcard-media" type="button" data-key="experimental" data-i="0" aria-label="Open Photo manipulation: Portrait with a neon halo"><img src="assets/library/experimental/photomanip1.webp" alt="Photo manipulation: Portrait with a neon halo" loading="lazy" decoding="async" width="2000" height="1600"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Portrait with a neon halo</p></div><span class="gcard-tag">Experimental</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="3" aria-label="Open Maison: Maison Matcha lands at Yamanote: four new matcha drinks"><img src="assets/library/visual/maison2.webp" alt="Maison: Maison Matcha lands at Yamanote: four new matcha drinks" loading="lazy" decoding="async" width="1414" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Maison</h2><p class="gcard-desc">Maison Matcha lands at Yamanote: four new matcha drinks</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="1" aria-label="Open Spaces: Open sandwich reel for Spaces"><video src="assets/library/motion/spaces2.mp4" poster="assets/library/motion/spaces2_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Spaces</h2><p class="gcard-desc">Open sandwich reel for Spaces</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="4" aria-label="Open Blue Velvet: Embrace your confident smile: skincare campaign visual"><img src="assets/library/visual/bluevelvetimg1.webp" alt="Blue Velvet: Embrace your confident smile: skincare campaign visual" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Blue Velvet</h2><p class="gcard-desc">Embrace your confident smile: skincare campaign visual</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="5" aria-label="Open Streetery: Business lunch menu, with a hand-drawn street scene"><img src="assets/library/visual/streeteryimg2.webp" alt="Streetery: Business lunch menu, with a hand-drawn street scene" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Streetery</h2><p class="gcard-desc">Business lunch menu, with a hand-drawn street scene</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="2" aria-label="Open Raffles The Palm: Southern Italian brunch at Piatti, animated poster"><video src="assets/library/motion/raffles4.mp4" poster="assets/library/motion/raffles4_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Southern Italian brunch at Piatti, animated poster</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="6" aria-label="Open Hardee&#x27;s"><img src="assets/library/visual/hardeesimg1.webp" alt="Hardee&#x27;s: Blazing Wraptor launch poster, Arabic edition" loading="lazy" decoding="async" width="1000" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Hardee&#x27;s</h2><p class="gcard-desc">Blazing Wraptor launch poster, Arabic edition</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="3d">
+        <button class="gcard-media" type="button" data-key="3d" data-i="0" aria-label="Open 3D render: Breakfast table scene, rendered in 3D"><img src="assets/library/3d/3d-1.webp" alt="3D render: Breakfast table scene, rendered in 3D" loading="lazy" decoding="async" width="2000" height="1116"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">3D render</h2><p class="gcard-desc">Breakfast table scene, rendered in 3D</p></div><span class="gcard-tag">3D</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="7" aria-label="Open Four Seasons: Iftar at Mina Brasserie for Ramadan"><img src="assets/library/visual/fourseasonimg8.webp" alt="Four Seasons: Iftar at Mina Brasserie for Ramadan" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Iftar at Mina Brasserie for Ramadan</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="8" aria-label="Open Tomo: Dubai Restaurant Week announcement"><img src="assets/library/visual/tomoimg1.webp" alt="Tomo: Dubai Restaurant Week announcement" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Tomo</h2><p class="gcard-desc">Dubai Restaurant Week announcement</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="3" aria-label="Open Raffles The Palm: World Earth Day animation"><video src="assets/library/motion/raffles5.mp4" poster="assets/library/motion/raffles5_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">World Earth Day animation</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="9" aria-label="Open Maison: Campaign collage with Japanese cut-out illustrations"><img src="assets/library/visual/maison1.webp" alt="Maison: Campaign collage with Japanese cut-out illustrations" loading="lazy" decoding="async" width="1080" height="1350"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Maison</h2><p class="gcard-desc">Campaign collage with Japanese cut-out illustrations</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="experimental">
+        <button class="gcard-media" type="button" data-key="experimental" data-i="1" aria-label="Open Photo manipulation: Portrait behind a green alien balloon"><img src="assets/library/experimental/photomanip2.webp" alt="Photo manipulation: Portrait behind a green alien balloon" loading="lazy" decoding="async" width="1333" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Portrait behind a green alien balloon</p></div><span class="gcard-tag">Experimental</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="10" aria-label="Open Raffles The Palm: Ultimate Well-Being spa day offer"><img src="assets/library/visual/rafflesimg1.webp" alt="Raffles The Palm: Ultimate Well-Being spa day offer" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Ultimate Well-Being spa day offer</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="4" aria-label="Open Raffles The Palm: Spa and wellness membership, animated"><video src="assets/library/motion/raffles6.mp4" poster="assets/library/motion/raffles6_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Spa and wellness membership, animated</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="11" aria-label="Open Jungle: Weekend sangria poster for The Jungle"><img src="assets/library/visual/jungleimg1.webp" alt="Jungle: Weekend sangria poster for The Jungle" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Jungle</h2><p class="gcard-desc">Weekend sangria poster for The Jungle</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="12" aria-label="Open Four Seasons: La Vie en Rosé lunch at Mina Brasserie, Friday to Sunday"><img src="assets/library/visual/fourseasonimg3.webp" alt="Four Seasons: La Vie en Rosé lunch at Mina Brasserie, Friday to Sunday" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">La Vie en Rosé lunch at Mina Brasserie, Friday to Sunday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="5" aria-label="Open Raffles The Palm: World Meditation Day animation"><video src="assets/library/motion/raffles7.mp4" poster="assets/library/motion/raffles7_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">World Meditation Day animation</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="13" aria-label="Open Maison: Café lifestyle poster with an illustrated overlay"><img src="assets/library/visual/maison4.webp" alt="Maison: Café lifestyle poster with an illustrated overlay" loading="lazy" decoding="async" width="1500" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Maison</h2><p class="gcard-desc">Café lifestyle poster with an illustrated overlay</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="14" aria-label="Open Student invitation: Student Inventor Series winners announcement"><img src="assets/library/visual/studentinv1.webp" alt="Student invitation: Student Inventor Series winners announcement" loading="lazy" decoding="async" width="1414" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Student invitation</h2><p class="gcard-desc">Student Inventor Series winners announcement</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="15" aria-label="Open Raffles The Palm: Evening brunch with jazz at Sola, every Saturday"><img src="assets/library/visual/rafflesimg9.webp" alt="Raffles The Palm: Evening brunch with jazz at Sola, every Saturday" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Evening brunch with jazz at Sola, every Saturday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="6" aria-label="Open Hardee&#x27;s"><video src="assets/library/motion/hardees1.mp4" poster="assets/library/motion/hardees1_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Hardee&#x27;s</h2><p class="gcard-desc">Blazing Wraptor launch reel</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="experimental">
+        <button class="gcard-media" type="button" data-key="experimental" data-i="2" aria-label="Open Photo manipulation: Alien-headed figure in a shopping trolley at night"><img src="assets/library/experimental/photomanip3.webp" alt="Photo manipulation: Alien-headed figure in a shopping trolley at night" loading="lazy" decoding="async" width="2000" height="1333"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Alien-headed figure in a shopping trolley at night</p></div><span class="gcard-tag">Experimental</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="16" aria-label="Open Four Seasons: Ladies Night at Mercury Rooftop, every Tuesday"><img src="assets/library/visual/fourseasonimg10.webp" alt="Four Seasons: Ladies Night at Mercury Rooftop, every Tuesday" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Ladies Night at Mercury Rooftop, every Tuesday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="17" aria-label="Open Raffles The Palm: Evening brunch with jazz at Sola, trumpet illustration"><img src="assets/library/visual/rafflesimg2.webp" alt="Raffles The Palm: Evening brunch with jazz at Sola, trumpet illustration" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Evening brunch with jazz at Sola, trumpet illustration</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="7" aria-label="Open Hardee&#x27;s"><video src="assets/library/motion/hardees2.mp4" poster="assets/library/motion/hardees2_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Hardee&#x27;s</h2><p class="gcard-desc">Blazing Wraptor boxes reel</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="18" aria-label="Open Maison: Brand introduction poster for Marsa Boulevard"><img src="assets/library/visual/maison3.webp" alt="Maison: Brand introduction poster for Marsa Boulevard" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Maison</h2><p class="gcard-desc">Brand introduction poster for Marsa Boulevard</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="19" aria-label="Open Tomo: Business lunch, Monday to Friday"><img src="assets/library/visual/tomoimg3.webp" alt="Tomo: Business lunch, Monday to Friday" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Tomo</h2><p class="gcard-desc">Business lunch, Monday to Friday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="3d">
+        <button class="gcard-media" type="button" data-key="3d" data-i="1" aria-label="Open 3D render: Astronaut reaching for a butterfly, with Japanese type"><img src="assets/library/3d/3d-2.webp" alt="3D render: Astronaut reaching for a butterfly, with Japanese type" loading="lazy" decoding="async" width="1800" height="1800"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">3D render</h2><p class="gcard-desc">Astronaut reaching for a butterfly, with Japanese type</p></div><span class="gcard-tag">3D</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="20" aria-label="Open Ivan Aaro, album art: Album cover and vinyl mock-up for Ivan Aaro"><img src="assets/library/visual/ivanaaro--album-art-light.webp" alt="Ivan Aaro, album art: Album cover and vinyl mock-up for Ivan Aaro" loading="lazy" decoding="async" width="2000" height="1500"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Ivan Aaro, album art</h2><p class="gcard-desc">Album cover and vinyl mock-up for Ivan Aaro</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="8" aria-label="Open Crossing: Happy hour at The Crossing"><video src="assets/library/motion/crossing1.mp4" poster="assets/library/motion/crossing1_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Crossing</h2><p class="gcard-desc">Happy hour at The Crossing</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="21" aria-label="Open Four Seasons: Sip, Savour, Sparkle: a weekly evening at Luna"><img src="assets/library/visual/fourseasonimg5.webp" alt="Four Seasons: Sip, Savour, Sparkle: a weekly evening at Luna" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Sip, Savour, Sparkle: a weekly evening at Luna</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="22" aria-label="Open Raffles The Palm: Sound-bowl Zen meditation, every Saturday"><img src="assets/library/visual/rafflesimg6.webp" alt="Raffles The Palm: Sound-bowl Zen meditation, every Saturday" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Sound-bowl Zen meditation, every Saturday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="experimental">
+        <button class="gcard-media" type="button" data-key="experimental" data-i="3" aria-label="Open Photo manipulation: Inverted neon portrait with glowing eyes"><img src="assets/library/experimental/photomanip4.webp" alt="Photo manipulation: Inverted neon portrait with glowing eyes" loading="lazy" decoding="async" width="2000" height="1333"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Inverted neon portrait with glowing eyes</p></div><span class="gcard-tag">Experimental</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="9" aria-label="Open Crossing: Cloche-lift reveal for The Crossing"><video src="assets/library/motion/crossing2.mp4" poster="assets/library/motion/crossing2_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Crossing</h2><p class="gcard-desc">Cloche-lift reveal for The Crossing</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="23" aria-label="Open Photo manipulation: Night forest scene: a figure and a bear by firefly light"><img src="assets/library/visual/manipulation-work.webp" alt="Photo manipulation: Night forest scene: a figure and a bear by firefly light" loading="lazy" decoding="async" width="2000" height="1400"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Night forest scene: a figure and a bear by firefly light</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="24" aria-label="Open Hardee&#x27;s"><img src="assets/library/visual/hardeesimg2.webp" alt="Hardee&#x27;s: Cheesy Harditos with Doritos: campaign key visual" loading="lazy" decoding="async" width="2000" height="1500"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Hardee&#x27;s</h2><p class="gcard-desc">Cheesy Harditos with Doritos: campaign key visual</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="25" aria-label="Open Matagi: Ichigo Ichie dinner, every Friday"><img src="assets/library/visual/matagiimg1.webp" alt="Matagi: Ichigo Ichie dinner, every Friday" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Matagi</h2><p class="gcard-desc">Ichigo Ichie dinner, every Friday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="10" aria-label="Open Crossing: Namaste brunch at The Crossing, weekends"><video src="assets/library/motion/crossing3.mp4" poster="assets/library/motion/crossing3_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Crossing</h2><p class="gcard-desc">Namaste brunch at The Crossing, weekends</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="26" aria-label="Open Raffles The Palm: Happy hour by the pool and beach at Piatti"><img src="assets/library/visual/rafflesimg10.webp" alt="Raffles The Palm: Happy hour by the pool and beach at Piatti" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Happy hour by the pool and beach at Piatti</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="27" aria-label="Open Four Seasons: Aperitivo hour at Luna, Monday to Friday"><img src="assets/library/visual/fourseasonimg2.webp" alt="Four Seasons: Aperitivo hour at Luna, Monday to Friday" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Aperitivo hour at Luna, Monday to Friday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="11" aria-label="Open Four Seasons: Champagne pour for Penrose"><video src="assets/library/motion/fourseason2.mp4" poster="assets/library/motion/fourseason2_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Champagne pour for Penrose</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="28" aria-label="Open Raffles The Palm: Raffles Wellness Day couples’ retreat, March 2024"><img src="assets/library/visual/rafflesimg4.webp" alt="Raffles The Palm: Raffles Wellness Day couples’ retreat, March 2024" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Raffles Wellness Day couples’ retreat, March 2024</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="experimental">
+        <button class="gcard-media" type="button" data-key="experimental" data-i="4" aria-label="Open Photo manipulation: Psychedelic cosmic collage portrait"><img src="assets/library/experimental/photomanip6.webp" alt="Photo manipulation: Psychedelic cosmic collage portrait" loading="lazy" decoding="async" width="1773" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Psychedelic cosmic collage portrait</p></div><span class="gcard-tag">Experimental</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="29" aria-label="Open Jungle: Eat this! No limits to taste: taco poster"><img src="assets/library/visual/jungleimg2.webp" alt="Jungle: Eat this! No limits to taste: taco poster" loading="lazy" decoding="async" width="1080" height="1920"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Jungle</h2><p class="gcard-desc">Eat this! No limits to taste: taco poster</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="12" aria-label="Open Four Seasons: Weekend at Mercury Rooftop reel"><video src="assets/library/motion/fourseason3.mp4" poster="assets/library/motion/fourseason3_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Weekend at Mercury Rooftop reel</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="30" aria-label="Open Tomo: Shikisai lunch, every Saturday"><img src="assets/library/visual/tomoimg2.webp" alt="Tomo: Shikisai lunch, every Saturday" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Tomo</h2><p class="gcard-desc">Shikisai lunch, every Saturday</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="31" aria-label="Open Raffles The Palm: Jazz O’Clock, daily at Sola"><img src="assets/library/visual/rafflesimg7.webp" alt="Raffles The Palm: Jazz O’Clock, daily at Sola" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Jazz O’Clock, daily at Sola</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="32" aria-label="Open Streetery: From the streets of Asia to your doorstep: delivery launch"><img src="assets/library/visual/streeteryimg3.webp" alt="Streetery: From the streets of Asia to your doorstep: delivery launch" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Streetery</h2><p class="gcard-desc">From the streets of Asia to your doorstep: delivery launch</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="3d">
+        <button class="gcard-media" type="button" data-key="3d" data-i="2" aria-label="Open 3D render: We are the universe: abstract geometry poster"><img src="assets/library/3d/3d-3.webp" alt="3D render: We are the universe: abstract geometry poster" loading="lazy" decoding="async" width="1600" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">3D render</h2><p class="gcard-desc">We are the universe: abstract geometry poster</p></div><span class="gcard-tag">3D</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="13" aria-label="Open Motion design: Abstract mask motion study"><video src="assets/library/motion/motiondesignvid_2.mp4" poster="assets/library/motion/motiondesignvid_2_thumb.webp" muted loop playsinline preload="none" width="1080" height="720"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Motion design</h2><p class="gcard-desc">Abstract mask motion study</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="33" aria-label="Open Four Seasons: Ladies Night at Mercury Rooftop, hand-lettered title"><img src="assets/library/visual/fourseasonimg6.webp" alt="Four Seasons: Ladies Night at Mercury Rooftop, hand-lettered title" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Ladies Night at Mercury Rooftop, hand-lettered title</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="34" aria-label="Open Raffles The Palm: Spa and wellness membership tiers"><img src="assets/library/visual/rafflesimg3.webp" alt="Raffles The Palm: Spa and wellness membership tiers" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Spa and wellness membership tiers</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="14" aria-label="Open A5 motion design: I can’t: mental-health campaign film"><video src="assets/library/motion/a5_motiondesign_nirmalsudish.mp4" poster="assets/library/motion/a5_motiondesign_nirmalsudish_thumb.webp" muted loop playsinline preload="none" width="1600" height="900"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">A5 motion design</h2><p class="gcard-desc">I can’t: mental-health campaign film</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="35" aria-label="Open Four Seasons: Date night at Sea Fu"><img src="assets/library/visual/fourseasonimg4.webp" alt="Four Seasons: Date night at Sea Fu" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Four Seasons</h2><p class="gcard-desc">Date night at Sea Fu</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="experimental">
+        <button class="gcard-media" type="button" data-key="experimental" data-i="5" aria-label="Open Photo manipulation: Distort: a figure in a field of flowers"><img src="assets/library/experimental/photomanip7.webp" alt="Photo manipulation: Distort: a figure in a field of flowers" loading="lazy" decoding="async" width="1251" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Photo manipulation</h2><p class="gcard-desc">Distort: a figure in a field of flowers</p></div><span class="gcard-tag">Experimental</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="36" aria-label="Open Raffles The Palm: Winds of the Himalayas, arched layout"><img src="assets/library/visual/rafflesimg8.webp" alt="Raffles The Palm: Winds of the Himalayas, arched layout" loading="lazy" decoding="async" width="1125" height="2000"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Raffles The Palm</h2><p class="gcard-desc">Winds of the Himalayas, arched layout</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="37" aria-label="Open Packaging: Business cards in black with a gold mark"><img src="assets/library/visual/packaging1.webp" alt="Packaging: Business cards in black with a gold mark" loading="lazy" decoding="async" width="2000" height="1500"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Packaging</h2><p class="gcard-desc">Business cards in black with a gold mark</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+      <article class="gcard" data-cat="motion">
+        <button class="gcard-media" type="button" data-key="motion" data-i="15" aria-label="Open Animated poster: Itali: animated film poster"><video src="assets/library/motion/animatedposter_nirmalsudish.mp4" poster="assets/library/motion/animatedposter_nirmalsudish_thumb.webp" muted loop playsinline preload="none" width="900" height="1600"></video></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Animated poster</h2><p class="gcard-desc">Itali: animated film poster</p></div><span class="gcard-tag">Motion</span></div>
+      </article>
+      <article class="gcard" data-cat="visual">
+        <button class="gcard-media" type="button" data-key="visual" data-i="38" aria-label="Open Packaging: Black business card with a yellow mark"><img src="assets/library/visual/packaging2.webp" alt="Packaging: Black business card with a yellow mark" loading="lazy" decoding="async" width="2000" height="1500"></button>
+        <div class="gcard-info"><div class="gcard-text"><h2 class="gcard-title">Packaging</h2><p class="gcard-desc">Black business card with a yellow mark</p></div><span class="gcard-tag">Visual design</span></div>
+      </article>
+    </section>
+    <!-- The close: the same contact as the homepage, so nobody has to go back to reach it. -->
+    <section class="grid-contact" id="contact" aria-labelledby="gridContactTitle">
+      <p class="grid-contact-line">Let&rsquo;s work together</p>
+      <div class="grid-contact-body">
+        <h2 class="grid-contact-title" id="gridContactTitle">Get in<br>touch</h2>
+        <div class="grid-contact-details">
+          <a class="grid-contact-mail" href="mailto:nirmal.sudish@gmail.com">nirmal.sudish@gmail.com</a>
+          <p class="grid-contact-place">Dubai, UAE<br>Available for work</p>
+          <div class="grid-contact-social">
+            <a href="https://www.linkedin.com/in/nirmalsudish/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.instagram.com/nirmellow/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.behance.net/nirmalsudish" target="_blank" rel="noopener">Behance</a>
+            <a href="assets/docs/nirmal-sudish-resume.pdf" target="_blank" rel="noopener">R&eacute;sum&eacute;</a>
+          </div>
+          <a class="grid-contact-home" href="index.html#works-stack">Back to the case studies &rarr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lbx" id="lbx" hidden role="dialog" aria-modal="true" aria-label="Library viewer">
+    <figure class="lbx-stage" id="lbxStage"></figure>
+    <button class="lbx-btn lbx-prev" id="lbxPrev" type="button" aria-label="Previous">&#8249;</button>
+    <button class="lbx-btn lbx-next" id="lbxNext" type="button" aria-label="Next">&#8250;</button>
+    <button class="lbx-btn lbx-close" id="lbxClose" type="button" aria-label="Close">&times;</button>
+  </div>
+
+  <div id="navMorph" aria-hidden="true">
+    <div class="navmorph-scrim"></div>
+    <nav class="navmorph-panel" id="navMorphPanel" aria-label="Primary">
+      <div class="navmorph-links">
+        <a class="navmorph-link" href="index.html#intro"><span class="navmorph-tri" aria-hidden="true">&#9656;</span>Me</a>
+        <a class="navmorph-link" href="index.html#works-stack">Studies</a>
+        <a class="navmorph-link" href="grid.html" aria-current="page">Grid</a>
+        <a class="navmorph-link" href="index.html#experience">List</a>
+      </div>
+      <span class="navmorph-mark" id="navMorphMark" aria-hidden="true"></span>
+    </nav>
+  </div>
+
+  <script>
+    (() => {
+      const trigger = document.getElementById('navTrigger');
+      const morph   = document.getElementById('navMorph');
+      const panel   = document.getElementById('navMorphPanel');
+      const mark    = document.getElementById('navMorphMark');
+      if (!trigger || !morph || !panel || !mark) return;
+
+      let open = false;
+
+      // Closed geometry is whatever box the logo currently occupies, read live
+      // so it stays correct across resizes and the hero's percentage sizing.
+      function collapse() {
+        const r = trigger.getBoundingClientRect();
+        panel.style.left = r.left + 'px';
+        panel.style.top = r.top + 'px';
+        panel.style.width = r.width + 'px';
+        panel.style.height = r.height + 'px';
+        panel.style.borderRadius = '14px';
+        // Sized and centred to sit exactly where the logo's own mark sits.
+        mark.style.width = r.height + 'px';
+        mark.style.height = r.height + 'px';
+        mark.style.right = ((r.width - r.height) / 2) + 'px';
+      }
+
+      // Clearing the inline values hands the panel back to its CSS geometry,
+      // which is the open state — so the transition runs from logo to panel.
+      function release() {
+        panel.style.left = panel.style.top = '';
+        panel.style.width = panel.style.height = '';
+        panel.style.borderRadius = '';
+        mark.style.width = mark.style.height = mark.style.right = '';
+      }
+
+      function openNav() {
+        if (open) return;
+        open = true;
+
+        panel.style.transition = 'none';
+        mark.style.transition = 'none';
+        collapse();
+        morph.classList.add('is-armed');
+        morph.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('nav-open');
+
+        // Commit the closed geometry before animating away from it.
+        void panel.offsetWidth;
+
+        panel.style.transition = '';
+        mark.style.transition = '';
+        morph.classList.add('is-open');
+        release();
+      }
+
+      function closeNav() {
+        if (!open) return;
+        open = false;
+
+        morph.classList.remove('is-open');
+        collapse();
+        document.body.classList.remove('nav-open');
+
+        panel.addEventListener('transitionend', function done(e) {
+          if (e.propertyName !== 'width' || open) return;
+          panel.removeEventListener('transitionend', done);
+          morph.classList.remove('is-armed');
+          morph.setAttribute('aria-hidden', 'true');
+        });
+      }
+
+      // Hover is for a mouse or pen only. A tap also fires an emulated hover
+      // just before its click, which would open the panel and shut it again
+      // in the same instant, so touch goes through the click below instead.
+      const hovering = (e) => e.pointerType === 'mouse' || e.pointerType === 'pen';
+      trigger.addEventListener('pointerenter', (e) => { if (hovering(e)) openNav(); });
+      // Once open the panel covers the trigger, so it owns the exit.
+      panel.addEventListener('pointerleave', (e) => { if (hovering(e)) closeNav(); });
+      // Guards the gap if the pointer leaves before the panel is under it.
+      trigger.addEventListener('pointerleave', (e) => {
+        if (!hovering(e)) return;
+        requestAnimationFrame(() => {
+          if (!panel.matches(':hover')) closeNav();
+        });
+      });
+
+      // Touch: the logo toggles the panel instead of following its link; a tap
+      // off the panel, on the mark or on a link, or a scroll, puts it away.
+      let lastPointer = 'mouse';
+      trigger.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType; });
+      trigger.addEventListener('click', (e) => {
+        if (lastPointer === 'mouse' || lastPointer === 'pen') return;   // desktop: goes home, as before
+        e.preventDefault();
+        open ? closeNav() : openNav();
+      });
+      morph.querySelector('.navmorph-scrim').addEventListener('click', closeNav);
+      mark.addEventListener('click', closeNav);
+      panel.querySelectorAll('.navmorph-link').forEach(a => a.addEventListener('click', () => closeNav()));
+      window.addEventListener('scroll', () => {
+        if (open && lastPointer !== 'mouse' && lastPointer !== 'pen') closeNav();
+      }, { passive: true });
+
+      // Keyboard focus opens it; the focus a tap leaves behind doesn't.
+      trigger.addEventListener('focusin', (e) => {
+        if (e.target.matches && e.target.matches(':focus-visible')) openNav();
+      });
+      morph.addEventListener('focusout', (e) => {
+        if (!morph.contains(e.relatedTarget)) closeNav();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && open) closeNav();
+      });
+    })();
+  </script>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script>const GRID_LIBRARY = {"visual": [{"src": "assets/library/visual/fourseasonimg1.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "Ladies Night poster, every Wednesday"}, {"src": "assets/library/visual/rafflesimg5.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Winds of the Himalayas: an Ayurvedic massage offer"}, {"src": "assets/library/visual/social_media2.webp", "kind": "image", "w": 2000, "h": 1333, "label": "Social media", "desc": "Game-day social posts, on an Instagram mock-up"}, {"src": "assets/library/visual/maison2.webp", "kind": "image", "w": 1414, "h": 2000, "label": "Maison", "desc": "Maison Matcha lands at Yamanote: four new matcha drinks"}, {"src": "assets/library/visual/bluevelvetimg1.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Blue Velvet", "desc": "Embrace your confident smile: skincare campaign visual"}, {"src": "assets/library/visual/streeteryimg2.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Streetery", "desc": "Business lunch menu, with a hand-drawn street scene"}, {"src": "assets/library/visual/hardeesimg1.webp", "kind": "image", "w": 1000, "h": 2000, "label": "Hardee's", "desc": "Blazing Wraptor launch poster, Arabic edition"}, {"src": "assets/library/visual/fourseasonimg8.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "Iftar at Mina Brasserie for Ramadan"}, {"src": "assets/library/visual/tomoimg1.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Tomo", "desc": "Dubai Restaurant Week announcement"}, {"src": "assets/library/visual/maison1.webp", "kind": "image", "w": 1080, "h": 1350, "label": "Maison", "desc": "Campaign collage with Japanese cut-out illustrations"}, {"src": "assets/library/visual/rafflesimg1.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Ultimate Well-Being spa day offer"}, {"src": "assets/library/visual/jungleimg1.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Jungle", "desc": "Weekend sangria poster for The Jungle"}, {"src": "assets/library/visual/fourseasonimg3.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "La Vie en Rosé lunch at Mina Brasserie, Friday to Sunday"}, {"src": "assets/library/visual/maison4.webp", "kind": "image", "w": 1500, "h": 2000, "label": "Maison", "desc": "Café lifestyle poster with an illustrated overlay"}, {"src": "assets/library/visual/studentinv1.webp", "kind": "image", "w": 1414, "h": 2000, "label": "Student invitation", "desc": "Student Inventor Series winners announcement"}, {"src": "assets/library/visual/rafflesimg9.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Raffles The Palm", "desc": "Evening brunch with jazz at Sola, every Saturday"}, {"src": "assets/library/visual/fourseasonimg10.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Four Seasons", "desc": "Ladies Night at Mercury Rooftop, every Tuesday"}, {"src": "assets/library/visual/rafflesimg2.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Evening brunch with jazz at Sola, trumpet illustration"}, {"src": "assets/library/visual/maison3.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Maison", "desc": "Brand introduction poster for Marsa Boulevard"}, {"src": "assets/library/visual/tomoimg3.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Tomo", "desc": "Business lunch, Monday to Friday"}, {"src": "assets/library/visual/ivanaaro--album-art-light.webp", "kind": "image", "w": 2000, "h": 1500, "label": "Ivan Aaro, album art", "desc": "Album cover and vinyl mock-up for Ivan Aaro"}, {"src": "assets/library/visual/fourseasonimg5.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "Sip, Savour, Sparkle: a weekly evening at Luna"}, {"src": "assets/library/visual/rafflesimg6.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Sound-bowl Zen meditation, every Saturday"}, {"src": "assets/library/visual/manipulation-work.webp", "kind": "image", "w": 2000, "h": 1400, "label": "Photo manipulation", "desc": "Night forest scene: a figure and a bear by firefly light"}, {"src": "assets/library/visual/hardeesimg2.webp", "kind": "image", "w": 2000, "h": 1500, "label": "Hardee's", "desc": "Cheesy Harditos with Doritos: campaign key visual"}, {"src": "assets/library/visual/matagiimg1.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Matagi", "desc": "Ichigo Ichie dinner, every Friday"}, {"src": "assets/library/visual/rafflesimg10.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Raffles The Palm", "desc": "Happy hour by the pool and beach at Piatti"}, {"src": "assets/library/visual/fourseasonimg2.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "Aperitivo hour at Luna, Monday to Friday"}, {"src": "assets/library/visual/rafflesimg4.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Raffles Wellness Day couples’ retreat, March 2024"}, {"src": "assets/library/visual/jungleimg2.webp", "kind": "image", "w": 1080, "h": 1920, "label": "Jungle", "desc": "Eat this! No limits to taste: taco poster"}, {"src": "assets/library/visual/tomoimg2.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Tomo", "desc": "Shikisai lunch, every Saturday"}, {"src": "assets/library/visual/rafflesimg7.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Jazz O’Clock, daily at Sola"}, {"src": "assets/library/visual/streeteryimg3.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Streetery", "desc": "From the streets of Asia to your doorstep: delivery launch"}, {"src": "assets/library/visual/fourseasonimg6.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "Ladies Night at Mercury Rooftop, hand-lettered title"}, {"src": "assets/library/visual/rafflesimg3.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Spa and wellness membership tiers"}, {"src": "assets/library/visual/fourseasonimg4.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Four Seasons", "desc": "Date night at Sea Fu"}, {"src": "assets/library/visual/rafflesimg8.webp", "kind": "image", "w": 1125, "h": 2000, "label": "Raffles The Palm", "desc": "Winds of the Himalayas, arched layout"}, {"src": "assets/library/visual/packaging1.webp", "kind": "image", "w": 2000, "h": 1500, "label": "Packaging", "desc": "Business cards in black with a gold mark"}, {"src": "assets/library/visual/packaging2.webp", "kind": "image", "w": 2000, "h": 1500, "label": "Packaging", "desc": "Black business card with a yellow mark"}], "3d": [{"src": "assets/library/3d/3d-1.webp", "kind": "image", "w": 2000, "h": 1116, "label": "3D render", "desc": "Breakfast table scene, rendered in 3D"}, {"src": "assets/library/3d/3d-2.webp", "kind": "image", "w": 1800, "h": 1800, "label": "3D render", "desc": "Astronaut reaching for a butterfly, with Japanese type"}, {"src": "assets/library/3d/3d-3.webp", "kind": "image", "w": 1600, "h": 2000, "label": "3D render", "desc": "We are the universe: abstract geometry poster"}], "experimental": [{"src": "assets/library/experimental/photomanip1.webp", "kind": "image", "w": 2000, "h": 1600, "label": "Photo manipulation", "desc": "Portrait with a neon halo"}, {"src": "assets/library/experimental/photomanip2.webp", "kind": "image", "w": 1333, "h": 2000, "label": "Photo manipulation", "desc": "Portrait behind a green alien balloon"}, {"src": "assets/library/experimental/photomanip3.webp", "kind": "image", "w": 2000, "h": 1333, "label": "Photo manipulation", "desc": "Alien-headed figure in a shopping trolley at night"}, {"src": "assets/library/experimental/photomanip4.webp", "kind": "image", "w": 2000, "h": 1333, "label": "Photo manipulation", "desc": "Inverted neon portrait with glowing eyes"}, {"src": "assets/library/experimental/photomanip6.webp", "kind": "image", "w": 1773, "h": 2000, "label": "Photo manipulation", "desc": "Psychedelic cosmic collage portrait"}, {"src": "assets/library/experimental/photomanip7.webp", "kind": "image", "w": 1251, "h": 2000, "label": "Photo manipulation", "desc": "Distort: a figure in a field of flowers"}], "motion": [{"src": "assets/library/motion/spaces1.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/spaces1_thumb.webp", "label": "Spaces", "desc": "Café menu reel for Spaces"}, {"src": "assets/library/motion/spaces2.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/spaces2_thumb.webp", "label": "Spaces", "desc": "Open sandwich reel for Spaces"}, {"src": "assets/library/motion/raffles4.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/raffles4_thumb.webp", "label": "Raffles The Palm", "desc": "Southern Italian brunch at Piatti, animated poster"}, {"src": "assets/library/motion/raffles5.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/raffles5_thumb.webp", "label": "Raffles The Palm", "desc": "World Earth Day animation"}, {"src": "assets/library/motion/raffles6.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/raffles6_thumb.webp", "label": "Raffles The Palm", "desc": "Spa and wellness membership, animated"}, {"src": "assets/library/motion/raffles7.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/raffles7_thumb.webp", "label": "Raffles The Palm", "desc": "World Meditation Day animation"}, {"src": "assets/library/motion/hardees1.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/hardees1_thumb.webp", "label": "Hardee's", "desc": "Blazing Wraptor launch reel"}, {"src": "assets/library/motion/hardees2.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/hardees2_thumb.webp", "label": "Hardee's", "desc": "Blazing Wraptor boxes reel"}, {"src": "assets/library/motion/crossing1.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/crossing1_thumb.webp", "label": "Crossing", "desc": "Happy hour at The Crossing"}, {"src": "assets/library/motion/crossing2.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/crossing2_thumb.webp", "label": "Crossing", "desc": "Cloche-lift reveal for The Crossing"}, {"src": "assets/library/motion/crossing3.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/crossing3_thumb.webp", "label": "Crossing", "desc": "Namaste brunch at The Crossing, weekends"}, {"src": "assets/library/motion/fourseason2.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/fourseason2_thumb.webp", "label": "Four Seasons", "desc": "Champagne pour for Penrose"}, {"src": "assets/library/motion/fourseason3.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/fourseason3_thumb.webp", "label": "Four Seasons", "desc": "Weekend at Mercury Rooftop reel"}, {"src": "assets/library/motion/motiondesignvid_2.mp4", "kind": "video", "w": 1080, "h": 720, "poster": "assets/library/motion/motiondesignvid_2_thumb.webp", "label": "Motion design", "desc": "Abstract mask motion study"}, {"src": "assets/library/motion/a5_motiondesign_nirmalsudish.mp4", "kind": "video", "w": 1600, "h": 900, "poster": "assets/library/motion/a5_motiondesign_nirmalsudish_thumb.webp", "label": "A5 motion design", "desc": "I can’t: mental-health campaign film"}, {"src": "assets/library/motion/animatedposter_nirmalsudish.mp4", "kind": "video", "w": 900, "h": 1600, "poster": "assets/library/motion/animatedposter_nirmalsudish_thumb.webp", "label": "Animated poster", "desc": "Itali: animated film poster"}]};</script>
+  <script src="grid.js?v=202610221805"></script>
+</body>
+</html>

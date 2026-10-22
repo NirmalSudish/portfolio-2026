@@ -1,0 +1,393 @@
+/* ==========================================================================
+   GRID PAGE
+   The library as a page of its own: a title with its intro beside it, the
+   category pills, then a masonry wall of cards (picture over a tint strip).
+   Laid out after billchien.net/grid, drawn in this site's palette and type.
+   ========================================================================== */
+
+/* Dark: the homepage's two colours swapped, brown ground and yellow type. */
+html, body.grid-page { background-color: #3e2f1c; color: #FFD177; }
+
+.grid-logo {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 20;
+  width: 64px;
+  height: 64px;
+}
+
+.grid-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(28px, 4vw, 64px);
+  padding: 140px 120px 0;
+}
+
+.grid-title {
+  margin: 0;
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: clamp(120px, 23vw, 380px);
+  line-height: 0.8;
+  text-transform: uppercase;
+  color: #FFD177;
+}
+
+.grid-intro {
+  max-width: 36ch;
+  margin: 0 0 0.4em;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.grid-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 72px 120px 44px;
+}
+
+.grid-tab {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 11px 22px;
+  border: 1.5px solid rgba(255, 209, 119, 0.35);
+  border-radius: 30px;
+  background: transparent;
+  color: #FFD177;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.grid-tab span { font-weight: 500; opacity: 0.6; }
+.grid-tab:hover { border-color: #FFD177; transform: translateY(-1px); }
+.grid-tab.is-active { background: #FFD177; border-color: #FFD177; color: #3e2f1c; }
+
+.grid-wall {
+  column-count: 4;
+  column-gap: 20px;
+  padding: 0 20px 140px;
+}
+
+.gcard {
+  display: inline-block;     /* keeps a card whole inside its column */
+  width: 100%;
+  margin: 0 0 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #4b3a24;
+  break-inside: avoid;
+}
+
+.gcard[hidden] { display: none; }
+
+.gcard-media {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: #2f2414;
+  cursor: zoom-in;
+}
+
+.gcard-media img,
+.gcard-media video {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gcard-media:hover img,
+.gcard-media:hover video { transform: scale(1.04); }
+.gcard-media:focus-visible { outline: 3px solid #FFD177; outline-offset: -3px; }
+
+.gcard-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px 22px;
+}
+
+.gcard-title {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.gcard-tag {
+  flex-shrink: 0;
+  padding: 5px 11px;
+  border: 1.5px solid rgba(255, 209, 119, 0.35);
+  border-radius: 20px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- back to the work ---- */
+.grid-close {
+  position: fixed;
+  top: 28px;
+  right: 28px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 16px;
+  background: #FFD177;
+  color: #3e2f1c;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.grid-close span { font-size: 15px; }
+.grid-close:hover { transform: translateY(-1px); }
+.grid-close:focus-visible { outline: 3px solid #FFD177; outline-offset: 3px; }
+
+/* ---- one category: its name as the title, the others listed below ---- */
+.grid-page.is-cat .grid-head { grid-template-columns: 1fr; gap: 28px; }
+.grid-page.is-cat .grid-title { font-size: clamp(72px, 12.5vw, 240px); line-height: 0.85; }
+
+.grid-more {
+  padding: 0 120px 140px;
+  border-top: 1.5px solid rgba(255, 209, 119, 0.25);
+}
+.grid-more-label {
+  margin: 0;
+  padding: 40px 0 16px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.grid-more-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 0 14px;
+  border-bottom: 1.5px solid rgba(255, 209, 119, 0.25);
+  color: #FFD177;
+  text-decoration: none;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(48px, 7vw, 120px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.grid-more-link small {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+.grid-more-link .grid-more-name { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.grid-more-link:hover .grid-more-name { transform: translateX(14px); }
+.grid-more-link:focus-visible { outline: 3px solid #FFD177; outline-offset: 4px; }
+
+@media (max-width: 1280px) { .grid-wall { column-count: 3; } }
+
+@media (max-width: 1024px) {
+  .grid-head { padding: 120px 80px 0; }
+  .grid-tabs { padding: 56px 80px 36px; }
+  .gcard-tag { font-size: 12px; }
+  .grid-more { padding: 0 80px 120px; }
+}
+
+@media (max-width: 860px) {
+  .grid-head { grid-template-columns: 1fr; align-items: start; }
+  .grid-wall { column-count: 2; }
+}
+
+@media (max-width: 571px) {
+  .grid-logo { width: 48px; height: 48px; top: 16px; left: 16px; }
+  .grid-head { padding: 96px 24px 0; gap: 20px; }
+  .grid-title { font-size: 38vw; }
+  .grid-intro { font-size: 16px; }
+  /* one row you swipe sideways, rather than filters wrapping into the cards */
+  .grid-tabs { flex-wrap: nowrap; overflow-x: auto; padding: 36px 24px 28px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .grid-tabs::-webkit-scrollbar { display: none; }
+  .grid-tab { flex: 0 0 auto; }
+  .grid-wall { column-gap: 10px; padding: 0 10px 80px; }
+  .gcard { margin-bottom: 10px; border-radius: 12px; }
+  .gcard-info { flex-direction: column; gap: 8px; padding: 12px 12px 14px; }
+  .grid-close { top: 16px; right: 16px; min-height: 48px; padding: 0 16px; font-size: 13px; }
+  .grid-page.is-cat .grid-title { font-size: 15vw; }
+  .grid-more { padding: 0 24px 80px; }
+  .grid-more-link { font-size: 11vw; gap: 12px; }
+  .grid-more-link small { font-size: 12px; }
+}
+
+/* ---- the close: let's work together / get in touch ---- */
+.grid-contact {
+  margin: 0 20px 20px;
+  padding: clamp(48px, 7vw, 110px) clamp(24px, 6vw, 100px) clamp(40px, 5vw, 80px);
+  border-radius: 16px;
+  background: #FFD177;
+  color: #3e2f1c;
+}
+.grid-contact-line {
+  margin: 0 0 24px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(18px, 1.6vw, 24px);
+  font-weight: 600;
+}
+.grid-contact-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(32px, 5vw, 90px);
+}
+.grid-contact-title {
+  margin: 0;
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-size: clamp(72px, 12vw, 210px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.grid-contact-details { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding-bottom: 0.6em; }
+.grid-contact-mail {
+  color: #3e2f1c;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(20px, 2.2vw, 34px);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.07em;
+  overflow-wrap: anywhere;
+}
+.grid-contact-place { margin: 0; font-family: "Plus Jakarta Sans", sans-serif; font-size: 16px; font-weight: 500; line-height: 1.55; }
+.grid-contact-social { display: flex; flex-wrap: wrap; gap: 10px; }
+.grid-contact-social a,
+.grid-contact-home {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid rgba(62, 47, 28, 0.4);
+  border-radius: 30px;
+  color: #3e2f1c;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.grid-contact-social a:hover,
+.grid-contact-home:hover { background: #3e2f1c; border-color: #3e2f1c; color: #FFD177; }
+.grid-contact-home { margin-top: 6px; background: #3e2f1c; border-color: #3e2f1c; color: #FFD177; }
+.grid-contact-home:hover { background: transparent; color: #3e2f1c; }
+.grid-contact a:focus-visible { outline: 3px solid #3e2f1c; outline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .grid-contact-body { grid-template-columns: 1fr; }
+}
+@media (max-width: 571px) {
+  .grid-contact { margin: 0 10px 10px; border-radius: 12px; }
+  .grid-contact-title { font-size: 26vw; }
+}
+
+/* ---- what each piece is, under its name ---- */
+.gcard-text { min-width: 0; }
+.gcard-desc {
+  margin: 6px 0 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: rgba(255, 209, 119, 0.8);
+}
+.lbx-cap em { font-style: normal; opacity: 0.75; margin-left: 0.5em; }
+
+/* ---- brands: a quieter second row under the categories ---- */
+.grid-tabs { padding-bottom: 18px; }
+.grid-brands {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0 120px 44px;
+}
+.grid-brands-label {
+  margin-right: 6px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 209, 119, 0.75);
+}
+.grid-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 36px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 30px;
+  background: rgba(255, 209, 119, 0.09);
+  color: #FFD177;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+.grid-brand span { font-weight: 500; opacity: 0.75; }
+.grid-brand:hover { background: rgba(255, 209, 119, 0.18); transform: translateY(-1px); }
+.grid-brand.is-active { background: #FFD177; color: #3e2f1c; }
+.grid-brand:focus-visible { outline: 3px solid #FFD177; outline-offset: 2px; }
+
+@media (max-width: 1024px) {
+  .grid-tabs { padding-bottom: 16px; }
+  .grid-brands { padding: 0 80px 36px; }
+}
+@media (max-width: 571px) {
+  .grid-tabs { padding-bottom: 12px; }
+  .grid-brands { flex-wrap: nowrap; overflow-x: auto; padding: 2px 24px 28px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .grid-brands::-webkit-scrollbar { display: none; }
+  .grid-brand { flex: 0 0 auto; min-height: 40px; }
+  .grid-brands-label { flex: 0 0 auto; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .grid-brand { min-height: 44px; }
+}
+
+/* ---- a small set: one centred row of full-size cards ---- */
+.grid-wall.is-few {
+  column-count: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+}
+.grid-wall.is-few .gcard { flex: 0 0 var(--col-w); width: var(--col-w); margin: 0; }
+@media (max-width: 571px) {
+  .grid-wall.is-few { gap: 10px; }
+}
