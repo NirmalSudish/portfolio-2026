@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const meta = heroCanvas.querySelector('.hero-meta');
       if (meta) {
         const m = meta.getBoundingClientRect(), c = heroCanvas.getBoundingClientRect();
-        heroCanvas.style.setProperty('--meta-w', `${Math.ceil(Math.max(0.36 * W, m.right - c.left + 26))}px`);
+        heroCanvas.style.setProperty('--meta-w', `${Math.ceil(Math.max(0.3 * W, m.right - c.left + 18))}px`);
       }
     } else {
       if (!same) {
@@ -667,8 +667,10 @@ document.addEventListener('DOMContentLoaded', () => {
       bottom.append(open, tags);
       card.appendChild(bottom);
 
-      prev.addEventListener('click', e => { e.stopPropagation(); shiftImage(card, -1); });
-      next.addEventListener('click', e => { e.stopPropagation(); shiftImage(card, 1); });
+      // Desktop: the arrows step through this project's pictures. Phones and
+      // tablets: they move to the previous or next project, the way a swipe does.
+      prev.addEventListener('click', e => { e.stopPropagation(); if (stackedUI.matches) step(-1); else shiftImage(card, -1); });
+      next.addEventListener('click', e => { e.stopPropagation(); if (stackedUI.matches) step(1); else shiftImage(card, 1); });
 
       // The whole card is the target; a drag that happened to end on it is not.
       card.addEventListener('click', () => {
@@ -1279,15 +1281,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // scaled down just enough for the column to fit.
     const wsHead = wsSection.querySelector('.ws-headline');
     const wsPanel = wsSection.querySelector('.ws-panel');
+    // One column (phones, tablets): the whole block, heading to card, is fitted
+    // to one screen the same way, so it can be seen at once. Measured against
+    // the screen with the browser's bars showing (100svh), so the fit holds
+    // still while Safari's toolbar slides in and out.
+    const svhProbe = document.createElement('div');
+    svhProbe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100vh;height:100svh;visibility:hidden;pointer-events:none';
+    document.body.appendChild(svhProbe);
     function fitWorksHead() {
-      wsSection.style.removeProperty('--ws-hl');
-      if (!wsHead || !wsPanel || singleColumn()) return;
-      const room = innerHeight - 2 * Math.max(16, Math.min(40, innerHeight * 0.045));
-      const over = wsPanel.getBoundingClientRect().height - room;
+      if (!wsHead || !wsPanel) return;
+      wsHead.style.fontSize = '';
+      wsStage.style.width = '';
+      wsStage.style.marginInline = '';
+      const vh = svhProbe.offsetHeight || innerHeight;
+      const single = singleColumn();
+      const room = vh - 2 * (single ? 14 : Math.max(16, Math.min(40, vh * 0.045)));
+      const block = () => (single ? wsInner : wsPanel).getBoundingClientRect().height;
+      let over = block() - room;
       if (over <= 0) return;
+      // the heading gives first, down to a floor that keeps it a display size
       const fs = parseFloat(getComputedStyle(wsHead).fontSize);
       const hh = wsHead.getBoundingClientRect().height;
-      wsSection.style.setProperty('--ws-hl', `${Math.max(56, fs * (hh - over) / hh).toFixed(1)}px`);
+      const floor = single ? Math.max(40, Math.min(64, vh * 0.075)) : 56;
+      wsHead.style.fontSize = `${Math.max(floor, fs * (hh - over) / hh).toFixed(1)}px`;
+      over = block() - room;
+      if (over <= 0 || !single) return;
+      // then, one column only, the card narrows (keeping its shape) for the rest
+      const st = wsStage.getBoundingClientRect();
+      wsStage.style.width = `${Math.max(st.width * 0.55, st.width * (st.height - over) / st.height).toFixed(1)}px`;
+      wsStage.style.marginInline = 'auto';
     }
     function fitWorks() { fitWorksHead(); fitDockRoom(); }
     fitWorks();
@@ -1319,6 +1341,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Desktops and laptops only: a mouse or trackpad on a wide screen. Anywhere
     // else the wheel (a tablet's trackpad, a small window) just scrolls the page.
     const desktopUI = window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)');
+    const stackedUI = window.matchMedia('(max-width: 1024px)');
     window.addEventListener('wheel', (e) => {
       if (!desktopUI.matches) return;
       if (pjOpen || morphed) return;         // those panels handle their own wheel
@@ -1368,10 +1391,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const settle = () => {
       docking = false;
-      // Phones and tablets scroll freely: a jump after the finger lifts landed
-      // the cards at the foot of the screen and sliced the heading under the
-      // status bar. Desktops and laptops still settle the section in place.
-      if (!desktopUI.matches) return;
+      // Phones and tablets settle only when the whole block fits the screen
+      // (it is fitted to), so the jump never slices the heading.
+      if (!desktopUI.matches && wsInner.getBoundingClientRect().height > innerHeight) return;
       if (pjOpen || morphed || !engaged()) return;
       const off = dockOffset();
       if (Math.abs(off) > DOCK_TOL && Math.sign(off) === lastDir) dock();
